@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>نظام إدارة الصيانة  </title>
+    <title>نظام إدارة الصيانة - تجمع الأحساء الصحي</title>
     <style>
         :root {
             --primary-blue: #0288D1; --light-blue: #E3F2FD; --new-request: #94A3B8;
@@ -11,16 +11,15 @@
         }
         body { font-family: 'Segoe UI', sans-serif; background-color: var(--bg-gray); margin: 0; padding: 20px; min-height: 100vh; position: relative; }
         body::before {
-            content: ""; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            width: 400px; height: 400px; opacity: 0.05; z-index: -1; pointer-events: none;
-            background-image: url('logo.png'); 
-            background-repeat: no-repeat; background-position: center; background-size: contain;
+            content: ""; position: fixed; top: 55%; left: 50%; transform: translate(-50%, -50%);
+            width: 80vw; height: 80vh; opacity: 0.03; z-index: -1; pointer-events: none;
+            background-image: url('logo.png'); background-repeat: no-repeat; background-position: center; background-size: contain;
         }
-        .container { max-width: 1300px; margin: auto; position: relative; z-index: 1; }
-        .header { text-align: center; margin-bottom: 30px; border-bottom: 3px solid var(--primary-blue); padding-bottom: 15px; }
-        .logo-top { width: 100px; margin-bottom: 10px; }
+        .container { max-width: 1350px; margin: auto; position: relative; z-index: 1; }
+        .header { text-align: center; margin-bottom: 30px; border-bottom: 4px solid var(--primary-blue); padding-bottom: 15px; }
+        .logo-top { width: 350px; height: auto; filter: drop-shadow(0px 4px 8px rgba(0, 136, 209, 0.2)); }
         .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-bottom: 30px; }
-        .stat-card { background: rgba(255, 255, 255, 0.9); padding: 20px 10px; border-radius: 18px; text-align: center; box-shadow: 0 8px 20px rgba(0,0,0,0.06); border: 3px solid transparent; backdrop-filter: blur(5px); }
+        .stat-card { background: white; padding: 20px 10px; border-radius: 18px; text-align: center; box-shadow: 0 8px 20px rgba(0,0,0,0.06); border: 3px solid transparent; }
         .stat-card p { font-size: 26px; font-weight: 800; margin: 10px 0 0; }
         .card-total { border-color: var(--primary-blue); color: var(--primary-blue); }
         .card-new { border-color: var(--new-request); color: var(--new-request); }
@@ -28,62 +27,68 @@
         .card-done { border-color: var(--success-green); color: var(--success-green); }
         .card-pending { border-color: var(--pending-orange); color: var(--pending-orange); }
         .card-manager { border-color: var(--maintenance-manager); color: var(--maintenance-manager); }
+        
         .input-box, .search-box { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.04); margin-bottom: 20px; display: flex; gap: 10px; flex-wrap: wrap; }
-        input, select, button { padding: 12px; border: 1.5px solid #E2E8F0; border-radius: 10px; outline: none; }
-        button { background-color: var(--primary-blue); color: white; border: none; cursor: pointer; font-weight: bold; padding: 12px 30px; }
+        input, select, button { padding: 10px; border: 1.5px solid #E2E8F0; border-radius: 10px; outline: none; }
+        button { background-color: var(--primary-blue); color: white; border: none; cursor: pointer; font-weight: bold; }
+
+        /* تنسيق الجدول والتحكم بالحالة */
         .table-box { background: white; border-radius: 15px; box-shadow: 0 5px 25px rgba(0,0,0,0.05); overflow: hidden; }
         table { width: 100%; border-collapse: collapse; }
-        th { background-color: var(--primary-blue); color: white; padding: 18px; text-align: right; }
-        td { padding: 15px; border-bottom: 1px solid #F1F5F9; }
-        .badge { padding: 6px 14px; border-radius: 8px; font-size: 11px; font-weight: 700; }
-        .bg-new { background: #F1F5F9; color: #475569; }
-        .bg-process { background: #E0F2FE; color: #0369A1; }
-        .bg-done { background: #DCFCE7; color: #15803D; }
-        .bg-pending { background: #FEF3C7; color: #92400E; }
-        .bg-manager { background: #E8EAF6; color: var(--maintenance-manager); }
-        .delay-warning { color: #EF4444; font-weight: bold; font-size: 11px; animation: pulse 1.5s infinite; display: block; margin-top: 5px; }
-        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
-        #loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.8); display: flex; justify-content: center; align-items: center; z-index: 1000; font-weight: bold; color: var(--primary-blue); }
-		
+        th { background-color: var(--primary-blue); color: white; padding: 15px; text-align: right; }
+        td { padding: 12px; border-bottom: 1px solid #F1F5F9; font-size: 14px; }
+        
+        .status-select { font-size: 12px; padding: 5px; border-radius: 5px; cursor: pointer; border: 1px solid #ddd; width: 130px; }
+        .btn-delete { background: #ff4d4d; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; font-size: 12px; }
+        
+        .badge { padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: bold; display: inline-block; margin-bottom: 5px; }
+        .bg-new { background: #f0f0f0; color: #666; }
+        .bg-process { background: #e3f2fd; color: #0277bd; }
+        .bg-done { background: #e8f5e9; color: #2e7d32; }
+        .bg-pending { background: #fff8e1; color: #f57f17; }
+        .bg-manager { background: #e8eaf6; color: #1a237e; }
     </style>
 </head>
 <body>
-<div id="loading-overlay">جاري جلب البيانات من قاعدة البيانات...</div>
 <div class="container">
     <div class="header">
         <img src="logo.png" class="logo-top">
-        <h2>نظام إدارة طلبات الصيانة</h2>
-        <p>engineer Hussain allali | المهندس حسين العلي</p>
+        <h2>إدارة صيانة تجمع الأحساء الصحي</h2>
     </div>
-    <div class="stats-grid">
+
+    <!-- الإحصائيات -->
+    <div class="stats-grid" id="statsGrid">
         <div class="stat-card card-total"><h3>الإجمالي</h3><p id="totalCount">0</p></div>
-        <div class="stat-card card-new"><h3>طلب جديد</h3><p id="newCount">0</p></div>
+        <div class="stat-card card-new"><h3>جديد</h3><p id="newCount">0</p></div>
         <div class="stat-card card-process"><h3>تحت الإجراء</h3><p id="processCount">0</p></div>
-        <div class="stat-card card-done"><h3>تم الإنجاز</h3><p id="doneCount">0</p></div>
+        <div class="stat-card card-done"><h3>منجز</h3><p id="doneCount">0</p></div>
         <div class="stat-card card-pending"><h3>مدير المشروع</h3><p id="pendingCount">0</p></div>
         <div class="stat-card card-manager"><h3>مدير الصيانة</h3><p id="managerCount">0</p></div>
     </div>
+
+    <!-- نموذج الإضافة -->
     <form id="maintenanceForm" class="input-box">
         <input type="number" name="reqId" id="reqId" placeholder="رقم الطلب" required>
-        <input type="text" name="reqLoc" id="reqLoc" placeholder="الموقع / القسم" required>
-        <input type="text" name="reqDesc" id="reqDesc" placeholder="وصف العطل..." required>
+        <input type="text" name="reqLoc" id="reqLoc" placeholder="الموقع" required>
+        <input type="text" name="reqDesc" id="reqDesc" placeholder="الوصف" required>
         <select name="reqStatus" id="reqStatus">
-            <option value="طلب جديد" selected>طلب جديد</option> 
+            <option value="طلب جديد">طلب جديد</option>
             <option value="تحت الإجراء">تحت الإجراء</option>
-            <option value="تم العمل عليها">تم العمل عليها</option>
-            <option value="محولة لمدير المشروع">محولة لمدير المشروع</option>
-            <option value="مدير الصيانة">مدير الصيانة</option>
         </select>
         <button type="submit" id="submitBtn">تسجيل الطلب</button>
     </form>
-    <div class="search-box">
-        <input type="search" id="searchInput" onkeyup="filterTable()" placeholder="🔍 ابحث برقم الطلب، الموقع، أو الوصف...">
-    </div>
+
     <div class="table-box">
         <table id="reqTable">
-		
             <thead>
-                <tr><th>رقم الطلب</th><th>الموقع</th><th>التاريخ</th><th>الوصف</th><th>الحالة</th></tr>
+                <tr>
+                    <th>رقم الطلب</th>
+                    <th>الموقع</th>
+                    <th>الوصف</th>
+                    <th>الحالة الحالية</th>
+                    <th>تغيير الحالة</th>
+                    <th>إجراء</th>
+                </tr>
             </thead>
             <tbody></tbody>
         </table>
@@ -91,81 +96,79 @@
 </div>
 
 <script>
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbw_MzDms4g1NVtyIOCCFBfG0qUr0ZD2zbqgt-P5JJB_7GiIHAkMfcCY0Apu24sEtJAV/exec'; 
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbyasOlB54LWINZm88KFfPG2xaoNpx_yElsnmYX7ytiDGXurNQljIteG6SJulSaYZzRG/exec';
     let requests = [];
 
-    // جلب البيانات فور فتح الصفحة
-    window.addEventListener('DOMContentLoaded', () => {
-        fetch(scriptURL)
-        .then(res => res.json())
-        .then(data => {
-            requests = data.map(row => ({
-                id: row[1],
-                loc: row[2],
-                date: new Date(row[0]).toLocaleString('ar-EG'),
-                desc: row[3],
-                status: row[4],
-                rawDate: new Date(row[0])
-            }));
+    // تحميل البيانات
+    function loadData() {
+        fetch(scriptURL).then(res => res.json()).then(data => {
+            requests = data;
             updateUI();
-            document.getElementById('loading-overlay').style.display = 'none';
-        })
-        .catch(err => {
-            console.error("خطأ في جلب البيانات:", err);
-            document.getElementById('loading-overlay').innerText = "خطأ في الربط مع السيرفر";
+        });
+    }
+
+    // تسجيل طلب جديد
+    document.getElementById('maintenanceForm').addEventListener('submit', e => {
+        e.preventDefault();
+        const formData = new FormData(e.target);
+        fetch(scriptURL, { method: 'POST', body: formData }).then(() => {
+            e.target.reset();
+            loadData();
         });
     });
 
-    document.getElementById('maintenanceForm').addEventListener('submit', e => {
-        e.preventDefault();
-        const btn = document.getElementById('submitBtn');
-        btn.disabled = true;
-        btn.innerText = "جاري الحفظ...";
+    // تحديث الحالة من الجدول
+    function changeStatus(id, newStatus) {
+        const formData = new FormData();
+        formData.append("action", "updateStatus");
+        formData.append("reqId", id);
+        formData.append("newStatus", newStatus);
 
-        const formData = new FormData(e.target);
-        
-        fetch(scriptURL, { method: 'POST', body: formData})
-        .then(() => {
-            // إضافة الطلب محلياً للجدول فوراً دون انتظار التحديث
-            const timestamp = new Date();
-            requests.unshift({ 
-                id: document.getElementById('reqId').value,
-                loc: document.getElementById('reqLoc').value,
-                desc: document.getElementById('reqDesc').value,
-                status: document.getElementById('reqStatus').value,
-                date: timestamp.toLocaleString('ar-EG'),
-                rawDate: timestamp
-            });
-            updateUI();
-            document.getElementById('maintenanceForm').reset();
-            document.getElementById('reqStatus').value = "طلب جديد";
-            btn.disabled = false;
-            btn.innerText = "تسجيل الطلب";
-        })
-        .catch(() => alert("فشل الإرسال، تحقق من الإنترنت"));
-    });
+        fetch(scriptURL, { method: 'POST', body: formData }).then(() => loadData());
+    }
+
+    // حذف طلب
+    function deleteReq(id) {
+        if(!confirm("حذف الطلب نهائياً؟")) return;
+        const formData = new FormData();
+        formData.append("action", "delete");
+        formData.append("reqId", id);
+        fetch(scriptURL, { method: 'POST', body: formData }).then(() => loadData());
+    }
 
     function updateUI() {
         const tbody = document.querySelector("#reqTable tbody");
         tbody.innerHTML = "";
         let counts = { total: 0, new: 0, process: 0, done: 0, pending: 0, manager: 0 };
-        const now = new Date();
 
-        requests.forEach(req => {
+        requests.forEach(row => {
             counts.total++;
-            let cls = ""; let warning = "";
-            const diffInHours = (now - req.rawDate) / (1000 * 60 * 60);
+            let status = row[4];
+            let cls = "";
+            if(status === "طلب جديد") { counts.new++; cls="bg-new"; }
+            else if(status === "تحت الإجراء") { counts.process++; cls="bg-process"; }
+            else if(status === "تم العمل عليها") { counts.done++; cls="bg-done"; }
+            else if(status === "محولة لمدير المشروع") { counts.pending++; cls="bg-pending"; }
+            else if(status === "مدير الصيانة") { counts.manager++; cls="bg-manager"; }
 
-            if(req.status === "طلب جديد") { counts.new++; cls="bg-new"; }
-            else if(req.status === "تحت الإجراء") { 
-                counts.process++; cls="bg-process"; 
-                if(diffInHours >= 24) warning = '<span class="delay-warning">⚠️ تجاوز 24 ساعة</span>';
-            }
-            else if(req.status === "تم العمل عليها") { counts.done++; cls="bg-done"; }
-            else if(req.status === "محولة لمدير المشروع") { counts.pending++; cls="bg-pending"; }
-            else if(req.status === "مدير الصيانة") { counts.manager++; cls="bg-manager"; }
-
-            tbody.innerHTML += `<tr><td><strong>#${req.id}</strong></td><td>${req.loc}</td><td>${req.date}</td><td>${req.desc}</td><td><span class="badge ${cls}">${req.status}</span>${warning}</td></tr>`;
+            tbody.innerHTML += `
+                <tr>
+                    <td><strong>#${row[1]}</strong></td>
+                    <td>${row[2]}</td>
+                    <td>${row[3]}</td>
+                    <td><span class="badge ${cls}">${status}</span></td>
+                    <td>
+                        <select class="status-select" onchange="changeStatus('${row[1]}', this.value)">
+                            <option value="" disabled selected>اختر حالة جديدة</option>
+                            <option value="طلب جديد">طلب جديد</option>
+                            <option value="تحت الإجراء">تحت الإجراء</option>
+                            <option value="تم العمل عليها">تم العمل عليها</option>
+                            <option value="محولة لمدير المشروع">محولة لمدير المشروع</option>
+                            <option value="مدير الصيانة">مدير الصيانة</option>
+                        </select>
+                    </td>
+                    <td><button class="btn-delete" onclick="deleteReq('${row[1]}')">حذف</button></td>
+                </tr>`;
         });
 
         document.getElementById('totalCount').innerText = counts.total;
@@ -176,15 +179,7 @@
         document.getElementById('managerCount').innerText = counts.manager;
     }
 
-    function filterTable() {
-        const input = document.getElementById("searchInput").value.toUpperCase();
-        const rows = document.querySelector("#reqTable tbody").getElementsByTagName("tr");
-        for (let i = 0; i < rows.length; i++) {
-            const text = rows[i].innerText.toUpperCase();
-            rows[i].style.display = text.includes(input) ? "" : "none";
-        }
-    }
+    window.onload = loadData;
 </script>
 </body>
 </html>
-
