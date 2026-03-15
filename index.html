@@ -3,57 +3,76 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>نظام صيانة تجمع الأحساء الصحي - النسخة النهائية</title>
+    <title>نظام الصيانة الخاص-eng.hussain alali</title>
     <script src="https://cdnjs.cloudflare.com"></script>
     <style>
         :root {
-            --primary: #0288D1; --light: #E3F2FD; --dark: #1A237E;
-            --success: #10B981; --warning: #F59E0B; --danger: #EF4444; --gray: #94A3B8;
+            --primary: #0288D1; /* أزرق التجمع */
+            --sky: #E3F2FD;
+            --dark-blue: #1565C0;
+            --success: #10B981;
+            --warning: #F59E0B;
+            --danger: #EF4444;
+            --gray: #94A3B8;
         }
-        body { font-family: 'Segoe UI', Tahoma, sans-serif; background: #F8FAFC; margin: 0; padding: 0; }
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; background: #F4F7F9; margin: 0; padding: 0; }
         
-        #loginSection { display: flex; align-items: center; justify-content: center; height: 100vh; background: linear-gradient(135deg, var(--light), #fff); }
-        .login-card { background: white; padding: 40px; border-radius: 25px; box-shadow: 0 20px 50px rgba(2, 136, 209, 0.15); width: 380px; text-align: center; border: 1px solid var(--light); }
-        .login-card input { width: 100%; padding: 14px; margin-bottom: 15px; border: 2px solid #F1F5F9; border-radius: 12px; box-sizing: border-box; }
+        /* شاشة الدخول */
+        #loginSection { display: flex; align-items: center; justify-content: center; height: 100vh; background: linear-gradient(135deg, var(--sky), #fff); }
+        .login-card { background: white; padding: 40px; border-radius: 25px; box-shadow: 0 20px 50px rgba(2, 136, 209, 0.1); width: 380px; text-align: center; border: 1px solid var(--sky); }
+        .login-card input { width: 100%; padding: 14px; margin-bottom: 15px; border: 2px solid #F1F5F9; border-radius: 12px; box-sizing: border-box; outline: none; }
         .login-card button { width: 100%; padding: 14px; background: var(--primary); color: white; border: none; border-radius: 12px; cursor: pointer; font-weight: bold; }
 
+        /* الداشبورد */
         #dashboard { display: none; padding: 25px; position: relative; }
         #dashboard::before {
             content: ""; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
             width: 60vw; height: 60vh; opacity: 0.03; z-index: -1; pointer-events: none;
             background: url('logo.png') no-repeat center; background-size: contain;
         }
-        .container { max-width: 1350px; margin: auto; }
-        .header { display: flex; justify-content: space-between; align-items: center; background: white; padding: 15px 25px; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 25px; }
-        .logo-main { width: 200px; }
+        .container { max-width: 1400px; margin: auto; }
+        .header { display: flex; justify-content: space-between; align-items: center; background: white; padding: 15px 25px; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 25px; border-right: 8px solid var(--primary); }
+        .logo-main { width: 180px; }
         
-        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-bottom: 25px; }
-        .stat-card { background: white; padding: 20px; border-radius: 20px; text-align: center; border-bottom: 5px solid #ddd; }
-        .stat-card p { font-size: 28px; font-weight: 800; margin: 10px 0 0; color: var(--primary); }
-        .kpi-box { background: var(--dark); color: white; padding: 20px; border-radius: 20px; text-align: center; }
+        /* شبكة الإحصائيات المطورة */
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 15px; margin-bottom: 25px; }
+        .stat-card { background: white; padding: 15px; border-radius: 20px; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.03); border: 1px solid #eee; border-top: 5px solid var(--gray); transition: 0.3s; }
+        .stat-card:hover { transform: translateY(-5px); box-shadow: 0 8px 20px rgba(0,0,0,0.06); }
+        .stat-card h3 { font-size: 13px; color: #64748B; margin: 0; font-weight: 600; }
+        .stat-card p { font-size: 28px; font-weight: 800; margin: 8px 0 0; color: var(--dark-blue); }
+        
+        /* ألوان البوردات للكروت */
+        .border-total { border-top-color: var(--primary); }
+        .border-new { border-top-color: var(--gray); }
+        .border-process { border-top-color: #00B0FF; }
+        .border-done { border-top-color: var(--success); }
+        .border-pending { border-top-color: var(--warning); }
+        .border-manager { border-top-color: var(--dark-blue); }
+        
+        .kpi-box { background: var(--dark-blue); color: white; padding: 15px; border-radius: 20px; text-align: center; display: flex; flex-direction: column; justify-content: center; }
 
         .box { background: white; padding: 20px; border-radius: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); margin-bottom: 20px; }
         .flex-box { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
         
         .table-box { background: white; border-radius: 20px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.05); }
         table { width: 100%; border-collapse: collapse; }
-        th { background: var(--primary); color: white; padding: 15px; text-align: right; }
+        th { background: var(--primary); color: white; padding: 15px; text-align: right; font-size: 14px; }
         td { padding: 12px; border-bottom: 1px solid #F1F5F9; font-size: 13px; }
-        tr:hover { background: var(--light); }
+        tr:hover { background: var(--sky); }
         
-        .badge { padding: 6px 12px; border-radius: 8px; font-size: 11px; font-weight: 700; display: inline-block; }
+        .badge { padding: 5px 10px; border-radius: 8px; font-size: 11px; font-weight: 700; display: inline-block; }
         .bg-new { background: #F1F5F9; color: #64748B; } 
         .bg-process { background: #E0F2FE; color: #0369A1; }
         .bg-done { background: #DCFCE7; color: #15803D; } 
         .bg-pending { background: #FEF3C7; color: #92400E; }
         .bg-manager { background: #E8EAF6; color: #3F51B5; }
         
-        .delay-alert { color: #B91C1C; font-weight: bold; font-size: 11px; animation: glow 1.5s infinite; }
-        @keyframes glow { 0%, 100% {opacity: 1;} 50% {opacity: 0.5;} }
+        .delay-alert { color: #B91C1C; font-weight: bold; font-size: 11px; animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0%, 100% {opacity: 1;} 50% {opacity: 0.5;} }
 
-        button { padding: 10px 20px; border-radius: 10px; border: none; font-weight: bold; cursor: pointer; }
+        button { padding: 10px 20px; border-radius: 10px; border: none; font-weight: bold; cursor: pointer; transition: 0.2s; }
         .btn-main { background: var(--primary); color: white; }
-        .btn-export { background: var(--dark); color: white; }
+        .btn-export { background: #34495E; color: white; }
         .btn-delete { background: var(--danger); color: white; padding: 5px 10px; font-size: 11px; }
         
         #loading { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.9); display: none; justify-content: center; align-items: center; z-index: 9999; font-weight: bold; color: var(--primary); }
@@ -66,19 +85,19 @@
 <div id="loginSection">
     <div class="login-card">
         <img src="logo.png" style="width: 140px; margin-bottom: 15px;" onerror="this.style.display='none'">
-        <h2 style="color:var(--dark); margin:0;">نظام الصيانة الخاص</h2>
-        <p style="color:var(--gray); margin-bottom:20px;">eng.Hussain alali</p>
+        <h2 style="color:var(--dark-blue); margin:0;">نظام الصيانة الخاص</h2>
+        <p style="color:var(--gray); margin-bottom:20px;">eng.Hussain Alali</p>
         <input type="text" id="userInput" placeholder="اسم المستخدم">
         <input type="password" id="passInput" placeholder="كلمة المرور">
-        <button onclick="handleLogin()">دخول</button>
-        <p id="errorMsg" style="color:var(--danger); display:none; margin-top:10px; font-weight:bold;">بيانات خاطئة</p>
+        <button onclick="handleLogin()">دخول النظام</button>
+        <p id="errorMsg" style="color:var(--danger); display:none; margin-top:10px; font-weight:bold;">❌ البيانات غير صحيحة</p>
     </div>
 </div>
 
 <div id="dashboard">
     <div class="container">
         <div class="header">
-            <button onclick="logout()" style="background:#eee;">❌ خروج</button>
+            <button onclick="logout()" style="background:#f5f5f5; color:#666;">❌ خروج</button>
             <img src="logo.png" class="logo-main" onerror="this.style.display='none'">
             <div id="userInfo" style="text-align: left;">
                 <span id="uName" style="font-weight:bold; color:var(--primary);"></span><br>
@@ -86,16 +105,19 @@
             </div>
         </div>
 
+        <!-- مربعات الإحصائيات الستة + الإنجاز -->
         <div class="stats-grid">
-            <div class="stat-card"><h3>إجمالي الطلبات</h3><p id="totalCount">0</p></div>
-            <div class="stat-card"><h3>طلب جديد</h3><p id="newCount">0</p></div>
-            <div class="stat-card"><h3>تحت الإجراء</h3><p id="processCount">0</p></div>
-            <div class="stat-card"><h3>مكتمل</h3><p id="doneCount">0</p></div>
-            <div class="kpi-box"><h3>نسبة الإنجاز</h3><h2 id="kpiValue" style="margin:5px 0; color:var(--success);">0%</h2></div>
+            <div class="stat-card border-total"><h3>إجمالي الطلبات</h3><p id="totalCount">0</p></div>
+            <div class="stat-card border-new"><h3>طلب جديد</h3><p id="newCount">0</p></div>
+            <div class="stat-card border-process"><h3>تحت الإجراء</h3><p id="processCount">0</p></div>
+            <div class="stat-card border-done"><h3>منجز</h3><p id="doneCount">0</p></div>
+            <div class="stat-card border-pending"><h3>مدير المشروع</h3><p id="pendingCount">0</p></div>
+            <div class="stat-card border-manager"><h3>مدير الصيانة</h3><p id="managerCount">0</p></div>
+            <div class="kpi-box"><h3>الإنجاز</h3><h2 id="kpiValue" style="margin:5px 0; color:var(--success);">0%</h2></div>
         </div>
 
         <div id="addBox" class="box">
-            <h4 style="margin:0 0 15px 0; color:var(--dark);">➕ إضافة أمر عمل جديد</h4>
+            <h4 style="margin:0 0 15px 0; color:var(--dark-blue);">➕ إضافة أمر عمل جديد</h4>
             <form id="addForm" class="flex-box">
                 <input type="number" id="reqId" placeholder="رقم الأمر" required style="width:120px;">
                 <input type="text" id="reqLoc" placeholder="الموقع" required>
@@ -104,14 +126,14 @@
                     <option value="طلب جديد">طلب جديد</option>
                     <option value="تحت الإجراء">تحت الإجراء</option>
                 </select>
-                <button type="submit" class="btn-main">حفظ</button>
+                <button type="submit" class="btn-main">حفظ في الشيت</button>
             </form>
         </div>
 
         <div class="box flex-box">
-            <strong>🔍 بحث:</strong>
-            <input type="text" id="searchInp" onkeyup="searchTable()" placeholder="ابحث هنا..." style="flex:1">
-            <button onclick="exportExcel()" class="btn-export">تصدير Excel 📊</button>
+            <strong>🔍 البحث السريع:</strong>
+            <input type="text" id="searchInp" onkeyup="searchTable()" placeholder="ابحث برقم الأمر، الموقع، أو الحالة..." style="flex:1">
+            <button onclick="exportExcel()" class="btn-export">تصدير إكسل 📊</button>
         </div>
 
         <div class="table-box">
@@ -134,7 +156,7 @@
 </div>
 
 <script>
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbzzywMmW914RCgVlFIqG3Iclax16iD1Tcgv1PQM64b8-WmCUfx2DQUfU8bkZzZEPVFa/exec';
+    const scriptURL ='https://script.google.com/macros/s/AKfycbyT9yQmmMK8k5v2qmGDSUXoBybgzRUGWgc2IyORYT3kVM3KhAtZA8gJTgRfpktmKzpe/exec';
     const USERS = {
         "admin": { pass: "ahsa2024", role: "admin", name: "المدير" },
         "user1": { pass: "123456", role: "user", name: "الفني" },
@@ -161,7 +183,7 @@
         document.getElementById('dashboard').style.display = 'block';
         const role = sessionStorage.getItem('role');
         document.getElementById('uName').innerText = sessionStorage.getItem('name');
-        document.getElementById('uRole').innerText = (role === 'admin' ? "مدير" : role === 'viewer' ? "مراقب" : "فني");
+        document.getElementById('uRole').innerText = (role === 'admin' ? "مدير نظام" : role === 'viewer' ? "مراقب جودة" : "فني صيانة");
 
         if(role === 'viewer') {
             document.getElementById('addBox').style.display = 'none';
@@ -219,28 +241,33 @@
         const tbody = document.querySelector("#mainTable tbody");
         tbody.innerHTML = "";
         const role = sessionStorage.getItem('role');
-        let counts = { total: 0, new: 0, process: 0, done: 0 };
+        let counts = { total: 0, new: 0, process: 0, done: 0, pending: 0, manager: 0 };
 
         data.slice().reverse().forEach(row => {
-            // row[0]=تاريخ، row[1]=رقم، row[2]=موقع، row[3]=وصف، row[4]=حالة
             const dDate = new Date(row[0]);
             const dId = row[1];
             const dLoc = row[2];
             const dDesc = row[3];
             const dStatus = row[4];
 
+            if(!dId) return; // تجاهل الصفوف الفارغة
+
             counts.total++;
             if(dStatus === "طلب جديد") counts.new++;
             else if(dStatus === "تحت الإجراء") counts.process++;
             else if(dStatus === "تم العمل عليها") counts.done++;
+            else if(dStatus === "محولة لمدير المشروع") counts.pending++;
+            else if(dStatus === "مدير الصيانة") counts.manager++;
 
-            let badgeCls = dStatus === "طلب جديد" ? "bg-new" : dStatus === "تحت الإجراء" ? "bg-process" : dStatus === "تم العمل عليها" ? "bg-done" : "bg-manager";
+            let badgeCls = dStatus === "طلب جديد" ? "bg-new" : dStatus === "تحت الإجراء" ? "bg-process" : dStatus === "تم العمل عليها" ? "bg-done" : dStatus === "محولة لمدير المشروع" ? "bg-pending" : "bg-manager";
             let delayHtml = (dStatus === "تحت الإجراء" && (new Date() - dDate) / 3600000 >= 24) ? '<br><span class="delay-alert">⚠️ متأخر</span>' : '';
 
             let actionCells = role === 'admin' ? `
                 <td class="action-col">
-                    <select onchange="updateStatus('${dId}', this.value)" style="font-size:11px;">
+                    <select onchange="updateStatus('${dId}', this.value)" style="font-size:11px; padding:5px; border-radius:5px;">
                         <option disabled selected>تغيير...</option>
+                        <option value="طلب جديد">طلب جديد</option>
+                        <option value="تحت الإجراء">تحت الإجراء</option>
                         <option value="تم العمل عليها">تم العمل عليها</option>
                         <option value="محولة لمدير المشروع">مدير المشروع</option>
                         <option value="مدير الصيانة">مدير الصيانة</option>
@@ -259,10 +286,13 @@
             </tr>`;
         });
 
+        // تحديث كروت الإحصائيات
         document.getElementById('totalCount').innerText = counts.total;
         document.getElementById('newCount').innerText = counts.new;
         document.getElementById('processCount').innerText = counts.process;
         document.getElementById('doneCount').innerText = counts.done;
+        document.getElementById('pendingCount').innerText = counts.pending;
+        document.getElementById('managerCount').innerText = counts.manager;
         document.getElementById('kpiValue').innerText = counts.total > 0 ? Math.round((counts.done / counts.total) * 100) + "%" : "0%";
     }
 
@@ -273,9 +303,9 @@
     }
 
     function exportExcel() {
-        const ws = XLSX.utils.json_to_sheet(allData.map(r => ({ "رقم الأمر": r[1], "الموقع": r[2], "التاريخ": r[0], "الوصف": r[3], "الحالة": r[4] })));
-        const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, "Report");
-        XLSX.utils.writeFile(wb, "Maintenance_Ahsa_Report.xlsx");
+        const ws = XLSX.utils.json_to_sheet(allData.map(r => ({ "التاريخ": r[0], "رقم الطلب": r[1], "الموقع": r[2], "الوصف": r[3], "الحالة": r[4] })));
+        const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, "MaintenanceReport");
+        XLSX.utils.writeFile(wb, "Report_Ahsa_Maintenance.xlsx");
     }
 
     function toggleLoad(s) { document.getElementById('loading').style.display = s ? 'flex' : 'none'; }
