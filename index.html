@@ -5,25 +5,25 @@
     <title>نظام الصيانة الخاص-eng.Hussain alali</title>
     <script src="https://cdnjs.cloudflare.com"></script>
     <style>
-        :root { --primary: #0288D1; --bg: #F1F5F9; --danger: #EF4444; --success: #10B981; }
+        :root { --primary: #0288D1; --bg: #F1F5F9; --danger: #EF4444; }
         body { font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--bg); margin: 0; padding: 0; direction: rtl; }
         
         /* شاشة تسجيل الدخول */
         #loginSection { display: flex; align-items: center; justify-content: center; height: 100vh; background: #e3f2fd; }
         .login-card { background: white; padding: 35px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); width: 350px; text-align: center; }
-        .login-card input { width: 100%; padding: 12px; margin-bottom: 15px; border: 1.5 solid #ddd; border-radius: 10px; box-sizing: border-box; }
+        .login-card input { width: 100%; padding: 12px; margin-bottom: 15px; border: 1.5px solid #ddd; border-radius: 10px; box-sizing: border-box; }
         .login-card button { width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 10px; cursor: pointer; font-weight: bold; }
 
         /* الداشبورد */
         #dashboardContent { display: none; padding: 20px; position: relative; }
         #dashboardContent::before {
-            content: ""; position: fixed; top: 55%; left: 50%; transform: translate(-50%, -50%);
+            content: ""; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
             width: 70vw; height: 70vh; opacity: 0.04; z-index: -1; pointer-events: none;
             background: url('logo.png') no-repeat center; background-size: contain;
         }
         .container { max-width: 1400px; margin: auto; }
-        .header { text-align: center; border-bottom: 4px solid var(--primary); padding-bottom: 15px; margin-bottom: 25px; display: flex; justify-content: space-between; align-items: center; }
-        .logo-top { width: 250px; }
+        .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 4px solid var(--primary); padding-bottom: 15px; margin-bottom: 25px; }
+        .logo-top { width: 220px; }
         
         .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 15px; margin-bottom: 25px; }
         .stat-card { background: white; padding: 15px; border-radius: 15px; text-align: center; border: 3px solid #ddd; }
@@ -44,7 +44,6 @@
         .bg-manager { background: #e8eaf6; color: #1a237e; }
         
         #loading { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.8); display: none; justify-content: center; align-items: center; z-index: 2000; font-weight: bold; color: var(--primary); }
-        .user-info { background: #fff; padding: 5px 15px; border-radius: 20px; border: 1px solid var(--primary); font-size: 14px; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -54,8 +53,8 @@
 <!-- شاشة تسجيل الدخول -->
 <div id="loginSection">
     <div class="login-card">
-        <img src="logo.png" style="width: 120px; margin-bottom: 15px;">
-        <h3>نظام الصيانة الخاص-eng.hussain alali</h3>
+        <img src="logo.png" style="width: 120px; margin-bottom: 15px;" onerror="this.style.display='none'">
+        <h3>نظام الصيانة - الدخول</h3>
         <input type="text" id="userInput" placeholder="اسم المستخدم">
         <input type="password" id="passInput" placeholder="كلمة المرور">
         <button onclick="handleLogin()">تسجيل الدخول</button>
@@ -68,11 +67,11 @@
     <div class="container">
         <div class="header">
             <button onclick="logout()" style="background: #666; color:white;">خروج</button>
-            <div>
-                <img src="logo.png" class="logo-top"><br>
+            <div style="text-align: center;">
+                <img src="logo.png" class="logo-top" onerror="this.style.display='none'"><br>
                 <h2 style="margin:0; color:var(--primary)">لوحة إدارة أوامر الصيانة</h2>
             </div>
-            <div class="user-info" id="displayUser"></div>
+            <div id="displayUser" style="font-weight: bold; color: var(--primary);"></div>
         </div>
 
         <div class="stats-grid" id="statsContainer"></div>
@@ -105,8 +104,8 @@
                         <th>الموقع</th>
                         <th>الوصف</th>
                         <th>الحالة</th>
-                        <th class="admin-only">تحديث الحالة</th>
-                        <th class="admin-only">إجراء</th>
+                        <th>تحديث الحالة</th>
+                        <th>إجراء</th>
                     </tr>
                 </thead>
                 <tbody></tbody>
@@ -116,13 +115,13 @@
 </div>
 
 <script>
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbyRqlS_XSYKmPMMTtrjH8VOrurBbxjJb6lKW_9_eV5bp0gUMX0Ba2msr1QoWSjKO3Fp/exec'; 
+    // ⚠️ ضع رابط السكربت الخاص بك هنا (مهم جداً ليعمل الكود)
+    const scriptURL ='https://script.google.com/macros/s/AKfycbxLYdFvnJ_RarW7XLkSD47MIL3Vfx1oigRae24ExTDw6ApK9-jIOiPHhhbaJ1X6AUUF/exec';
     
-    // 🔐 قاعدة بيانات المستخدمين (يمكنك إضافة المزيد هنا)
+    // بيانات الدخول
     const USERS = {
-        "admin": { pass: "Hussain2030", role: "admin", name: "مدير النظام" },
-        "user1": { pass: "123456@", role: "user-1", name: "موظف صيانة" }
-        "user1": { pass: "2030@", role: "user-2", name: "موظف صيانة" }
+        "admin": { pass: "ahsa2024", role: "admin", name: "مدير النظام" },
+        "user1": { pass: "123456", role: "user", name: "موظف صيانة" }
     };
 
     let allData = [];
@@ -130,7 +129,8 @@
     function handleLogin() {
         const u = document.getElementById('userInput').value;
         const p = document.getElementById('passInput').value;
-        if(USERS[u] && USERS[u].pass === p) {
+        
+        if (USERS[u] && USERS[u].pass === p) {
             sessionStorage.setItem('isLogged', 'true');
             sessionStorage.setItem('role', USERS[u].role);
             sessionStorage.setItem('name', USERS[u].name);
@@ -141,12 +141,11 @@
     }
 
     function showDashboard() {
-        const role = sessionStorage.getItem('role');
         document.getElementById('loginSection').style.display = 'none';
         document.getElementById('dashboardContent').style.display = 'block';
         document.getElementById('displayUser').innerText = "مرحباً: " + sessionStorage.getItem('name');
         
-        if(role === 'admin') {
+        if (sessionStorage.getItem('role') === 'admin') {
             document.getElementById('exportBtn').style.display = 'block';
         }
         loadData();
@@ -155,9 +154,16 @@
     function logout() { sessionStorage.clear(); location.reload(); }
 
     async function loadData() {
-        const res = await fetch(scriptURL);
-        allData = await res.json();
-        renderUI();
+        try {
+            toggleLoad(true);
+            const res = await fetch(scriptURL);
+            allData = await res.json();
+            renderUI();
+        } catch (e) {
+            console.error("خطأ في جلب البيانات:", e);
+        } finally {
+            toggleLoad(false);
+        }
     }
 
     document.getElementById('addForm').onsubmit = async (e) => {
@@ -177,7 +183,7 @@
     };
 
     async function updateStatus(id, stat) {
-        if(sessionStorage.getItem('role') !== 'admin') return alert("لا تملك صلاحية التعديل");
+        if(sessionStorage.getItem('role') !== 'admin') return alert("صلاحية الأدمن فقط");
         toggleLoad(true);
         const fd = new FormData();
         fd.append("action", "updateStatus");
@@ -185,11 +191,10 @@
         fd.append("newStatus", stat);
         await fetch(scriptURL, { method: 'POST', body: fd });
         loadData();
-        toggleLoad(false);
     }
 
     async function deleteReq(id) {
-        if(sessionStorage.getItem('role') !== 'admin') return alert("لا تملك صلاحية الحذف");
+        if(sessionStorage.getItem('role') !== 'admin') return alert("صلاحية الأدمن فقط");
         if(!confirm("حذف نهائي؟")) return;
         toggleLoad(true);
         const fd = new FormData();
@@ -197,7 +202,6 @@
         fd.append("reqId", id);
         await fetch(scriptURL, { method: 'POST', body: fd });
         loadData();
-        toggleLoad(false);
     }
 
     function renderUI(data = allData) {
@@ -208,10 +212,11 @@
 
         data.slice().reverse().forEach(row => {
             c["الإجمالي"]++;
-            if(c[row[4]] !== undefined) c[row[4]]++;
-            let badgeCls = row[4] === "طلب جديد" ? "bg-new" : row[4] === "تحت الإجراء" ? "bg-process" : row[4] === "تم العمل عليها" ? "bg-done" : "bg-manager";
+            const status = row[4];
+            if(c[status] !== undefined) c[status]++;
+            let badgeCls = status === "طلب جديد" ? "bg-new" : status === "تحت الإجراء" ? "bg-process" : status === "تم العمل عليها" ? "bg-done" : "bg-manager";
 
-            let actionCells = role === 'admin' ? `
+            let controls = role === 'admin' ? `
                 <td>
                     <select onchange="updateStatus('${row[1]}', this.value)">
                         <option disabled selected>تعديل...</option>
@@ -227,8 +232,8 @@
                 <td><strong>#${row[1]}</strong></td>
                 <td>${row[2]}</td>
                 <td>${row[3]}</td>
-                <td><span class="badge ${badgeCls}">${row[4]}</span></td>
-                ${actionCells}
+                <td><span class="badge ${badgeCls}">${status}</span></td>
+                ${controls}
             </tr>`;
         });
         renderStats(c);
@@ -255,10 +260,12 @@
         const ws = XLSX.utils.json_to_sheet(allData.map(r => ({ "التاريخ": r[0], "رقم الطلب": r[1], "الموقع": r[2], "الوصف": r[3], "الحالة": r[4] })));
         const wb = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, ws, "Maintenance");
-        XLSX.utils.writeFile(wb, "Maintenance_Report_Ahsa.xlsx");
+        XLSX.utils.writeFile(wb, "Report.xlsx");
     }
 
     function toggleLoad(s) { document.getElementById('loading').style.display = s ? 'flex' : 'none'; }
+    
+    // التحقق من الجلسة عند فتح الصفحة
     window.onload = () => { if(sessionStorage.getItem('isLogged')) showDashboard(); };
 </script>
 </body>
