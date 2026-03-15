@@ -3,51 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>نظام صيانة تجمع الأحساء الصحي - الإصدار الماسي</title>
+    <title>نظام صيانة تجمع الأحساء الصحي - النسخة النهائية</title>
     <script src="https://cdnjs.cloudflare.com"></script>
     <style>
         :root {
             --primary: #0288D1; --light: #E3F2FD; --dark: #1A237E;
             --success: #10B981; --warning: #F59E0B; --danger: #EF4444; --gray: #94A3B8;
         }
-        body { font-family: 'Segoe UI', Tahoma, sans-serif; background: #F8FAFC; margin: 0; padding: 0; transition: 0.3s; }
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; background: #F8FAFC; margin: 0; padding: 0; }
         
-        /* التحميل وتسجيل الدخول */
         #loginSection { display: flex; align-items: center; justify-content: center; height: 100vh; background: linear-gradient(135deg, var(--light), #fff); }
         .login-card { background: white; padding: 40px; border-radius: 25px; box-shadow: 0 20px 50px rgba(2, 136, 209, 0.15); width: 380px; text-align: center; border: 1px solid var(--light); }
-        .login-card input { width: 100%; padding: 14px; margin-bottom: 15px; border: 2px solid #F1F5F9; border-radius: 12px; transition: 0.3s; box-sizing: border-box; }
-        .login-card input:focus { border-color: var(--primary); outline: none; background: var(--light); }
-        .login-card button { width: 100%; padding: 14px; background: var(--primary); color: white; border: none; border-radius: 12px; cursor: pointer; font-weight: bold; font-size: 16px; }
+        .login-card input { width: 100%; padding: 14px; margin-bottom: 15px; border: 2px solid #F1F5F9; border-radius: 12px; box-sizing: border-box; }
+        .login-card button { width: 100%; padding: 14px; background: var(--primary); color: white; border: none; border-radius: 12px; cursor: pointer; font-weight: bold; }
 
-        /* الداشبورد */
         #dashboard { display: none; padding: 25px; position: relative; }
         #dashboard::before {
             content: ""; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            width: 70vw; height: 70vh; opacity: 0.04; z-index: -1; pointer-events: none;
+            width: 60vw; height: 60vh; opacity: 0.03; z-index: -1; pointer-events: none;
             background: url('logo.png') no-repeat center; background-size: contain;
         }
-        .header { display: flex; justify-content: space-between; align-items: center; background: white; padding: 15px 25px; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 30px; }
-        .logo-main { width: 220px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1)); }
+        .container { max-width: 1350px; margin: auto; }
+        .header { display: flex; justify-content: space-between; align-items: center; background: white; padding: 15px 25px; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 25px; }
+        .logo-main { width: 200px; }
         
-        /* كروت الإحصائيات والنسبة المئوية */
         .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-bottom: 25px; }
-        .stat-card { background: white; padding: 20px; border-radius: 20px; text-align: center; border-bottom: 5px solid #ddd; transition: 0.3s; }
-        .stat-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
-        .stat-card h3 { font-size: 14px; color: var(--gray); margin: 0; }
+        .stat-card { background: white; padding: 20px; border-radius: 20px; text-align: center; border-bottom: 5px solid #ddd; }
         .stat-card p { font-size: 28px; font-weight: 800; margin: 10px 0 0; color: var(--primary); }
-        
-        /* مؤشر النسبة المئوية الذكي */
-        .kpi-box { background: var(--dark); color: white; padding: 20px; border-radius: 20px; text-align: center; grid-column: span 1; }
-        .kpi-box h2 { font-size: 32px; margin: 5px 0; color: var(--success); }
+        .kpi-box { background: var(--dark); color: white; padding: 20px; border-radius: 20px; text-align: center; }
 
-        .box { background: white; padding: 25px; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); margin-bottom: 25px; }
+        .box { background: white; padding: 20px; border-radius: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); margin-bottom: 20px; }
         .flex-box { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
         
-        /* الجدول المتطور */
         .table-box { background: white; border-radius: 20px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.05); }
         table { width: 100%; border-collapse: collapse; }
-        th { background: var(--primary); color: white; padding: 18px; text-align: right; font-size: 14px; }
-        td { padding: 15px; border-bottom: 1px solid #F1F5F9; font-size: 13px; }
+        th { background: var(--primary); color: white; padding: 15px; text-align: right; }
+        td { padding: 12px; border-bottom: 1px solid #F1F5F9; font-size: 13px; }
         tr:hover { background: var(--light); }
         
         .badge { padding: 6px 12px; border-radius: 8px; font-size: 11px; font-weight: 700; display: inline-block; }
@@ -57,39 +48,37 @@
         .bg-pending { background: #FEF3C7; color: #92400E; }
         .bg-manager { background: #E8EAF6; color: #3F51B5; }
         
-        .delay-alert { background: #FEE2E2; color: #B91C1C; padding: 4px 8px; border-radius: 5px; font-weight: bold; animation: glow 1.5s infinite; }
-        @keyframes glow { 0% {box-shadow: 0 0 5px #EF4444;} 50% {box-shadow: 0 0 15px #EF4444;} 100% {box-shadow: 0 0 5px #EF4444;} }
+        .delay-alert { color: #B91C1C; font-weight: bold; font-size: 11px; animation: glow 1.5s infinite; }
+        @keyframes glow { 0%, 100% {opacity: 1;} 50% {opacity: 0.5;} }
 
-        button { padding: 12px 24px; border-radius: 12px; border: none; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        button { padding: 10px 20px; border-radius: 10px; border: none; font-weight: bold; cursor: pointer; }
         .btn-main { background: var(--primary); color: white; }
         .btn-export { background: var(--dark); color: white; }
-        .btn-delete { background: var(--danger); color: white; padding: 6px 12px; border-radius: 8px; }
+        .btn-delete { background: var(--danger); color: white; padding: 5px 10px; font-size: 11px; }
         
         #loading { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.9); display: none; justify-content: center; align-items: center; z-index: 9999; font-weight: bold; color: var(--primary); }
     </style>
 </head>
 <body>
 
-<div id="loading">🚀 جاري تحديث البيانات...</div>
+<div id="loading">🚀 جاري معالجة البيانات...</div>
 
-<!-- شاشة الدخول -->
 <div id="loginSection">
     <div class="login-card">
-        <img src="logo.png" style="width: 140px; margin-bottom: 20px;" onerror="this.style.display='none'">
-        <h2 style="color:var(--dark); margin:0;">نظام الصيانة الذكي</h2>
-        <p style="color:var(--gray); margin-bottom:25px;">تجمع الأحساء الصحي</p>
+        <img src="logo.png" style="width: 140px; margin-bottom: 15px;" onerror="this.style.display='none'">
+        <h2 style="color:var(--dark); margin:0;">نظام الصيانة الخاص</h2>
+        <p style="color:var(--gray); margin-bottom:20px;">eng.Hussain alali</p>
         <input type="text" id="userInput" placeholder="اسم المستخدم">
         <input type="password" id="passInput" placeholder="كلمة المرور">
-        <button onclick="handleLogin()">دخول النظام</button>
-        <p id="errorMsg" style="color:var(--danger); display:none; margin-top:15px; font-weight:bold;">⚠️ بيانات الدخول غير صحيحة</p>
+        <button onclick="handleLogin()">دخول</button>
+        <p id="errorMsg" style="color:var(--danger); display:none; margin-top:10px; font-weight:bold;">بيانات خاطئة</p>
     </div>
 </div>
 
-<!-- الداشبورد -->
 <div id="dashboard">
     <div class="container">
         <div class="header">
-            <button onclick="logout()" style="background:#eee; color:#333;">❌ خروج</button>
+            <button onclick="logout()" style="background:#eee;">❌ خروج</button>
             <img src="logo.png" class="logo-main" onerror="this.style.display='none'">
             <div id="userInfo" style="text-align: left;">
                 <span id="uName" style="font-weight:bold; color:var(--primary);"></span><br>
@@ -97,36 +86,31 @@
             </div>
         </div>
 
-        <!-- الإحصائيات المتقدمة -->
         <div class="stats-grid">
-            <div class="stat-card" style="border-color:var(--primary)"><h3>الإجمالي</h3><p id="totalCount">0</p></div>
-            <div class="stat-card" style="border-color:var(--gray)"><h3>طلب جديد</h3><p id="newCount">0</p></div>
-            <div class="stat-card" style="border-color:var(--accent-blue)"><h3>تحت الإجراء</h3><p id="processCount">0</p></div>
-            <div class="stat-card" style="border-color:var(--success)"><h3>مكتمل</h3><p id="doneCount">0</p></div>
-            <div class="kpi-box">
-                <h3>نسبة الإنجاز الكلية</h3>
-                <h2 id="kpiValue">0%</h2>
-            </div>
+            <div class="stat-card"><h3>إجمالي الطلبات</h3><p id="totalCount">0</p></div>
+            <div class="stat-card"><h3>طلب جديد</h3><p id="newCount">0</p></div>
+            <div class="stat-card"><h3>تحت الإجراء</h3><p id="processCount">0</p></div>
+            <div class="stat-card"><h3>مكتمل</h3><p id="doneCount">0</p></div>
+            <div class="kpi-box"><h3>نسبة الإنجاز</h3><h2 id="kpiValue" style="margin:5px 0; color:var(--success);">0%</h2></div>
         </div>
 
-        <!-- صندوق الإضافة (يخفى للمراقب) -->
         <div id="addBox" class="box">
             <h4 style="margin:0 0 15px 0; color:var(--dark);">➕ إضافة أمر عمل جديد</h4>
             <form id="addForm" class="flex-box">
                 <input type="number" id="reqId" placeholder="رقم الأمر" required style="width:120px;">
                 <input type="text" id="reqLoc" placeholder="الموقع" required>
-                <input type="text" id="reqDesc" placeholder="وصف العطل" required style="flex:1">
+                <input type="text" id="reqDesc" placeholder="الوصف" required style="flex:1">
                 <select id="reqStatus">
                     <option value="طلب جديد">طلب جديد</option>
                     <option value="تحت الإجراء">تحت الإجراء</option>
                 </select>
-                <button type="submit" class="btn-main">حفظ الطلب</button>
+                <button type="submit" class="btn-main">حفظ</button>
             </form>
         </div>
 
-        <div class="box flex-box" style="background:#fff;">
-            <strong>🔍 محرك البحث الذكي:</strong>
-            <input type="text" id="searchInp" onkeyup="searchTable()" placeholder="ابحث برقم الأمر، الموقع، أو الحالة..." style="flex:1">
+        <div class="box flex-box">
+            <strong>🔍 بحث:</strong>
+            <input type="text" id="searchInp" onkeyup="searchTable()" placeholder="ابحث هنا..." style="flex:1">
             <button onclick="exportExcel()" class="btn-export">تصدير Excel 📊</button>
         </div>
 
@@ -139,8 +123,8 @@
                         <th>التاريخ</th>
                         <th>الوصف</th>
                         <th>الحالة</th>
-                        <th id="thUpdate">تحديث</th>
-                        <th id="thDelete">إجراء</th>
+                        <th class="action-col">تحديث</th>
+                        <th class="action-col">إجراء</th>
                     </tr>
                 </thead>
                 <tbody></tbody>
@@ -150,13 +134,11 @@
 </div>
 
 <script>
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbyfKtG7hP446iqgiH2fqcJlJd_siCgSH0_drwgrV9T3f7-66xito9TLj539gaZyhkTr/exec';
-    
-    // 🔐 إدارة المستخدمين والصلاحيات
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbzzywMmW914RCgVlFIqG3Iclax16iD1Tcgv1PQM64b8-WmCUfx2DQUfU8bkZzZEPVFa/exec';
     const USERS = {
-        "admin": { pass: "ahsa2024", role: "admin", name: "مدير النظام" },
-        "user1": { pass: "123456", role: "user", name: "فني الصيانة" },
-        "viewer1": { pass: "112233", role: "viewer", name: "مراقب الجودة" }
+        "admin": { pass: "ahsa2024", role: "admin", name: "المدير" },
+        "user1": { pass: "123456", role: "user", name: "الفني" },
+        "viewer1": { pass: "112233", role: "viewer", name: "المراقب" }
     };
 
     let allData = [];
@@ -178,19 +160,12 @@
         document.getElementById('loginSection').style.display = 'none';
         document.getElementById('dashboard').style.display = 'block';
         const role = sessionStorage.getItem('role');
-        const name = sessionStorage.getItem('name');
-        
-        document.getElementById('uName').innerText = name;
-        document.getElementById('uRole').innerText = (role === 'admin' ? "صلاحية كاملة" : role === 'viewer' ? "عرض فقط" : "إدخال بيانات");
+        document.getElementById('uName').innerText = sessionStorage.getItem('name');
+        document.getElementById('uRole').innerText = (role === 'admin' ? "مدير" : role === 'viewer' ? "مراقب" : "فني");
 
-        // تطبيق الصلاحيات على الواجهة
         if(role === 'viewer') {
             document.getElementById('addBox').style.display = 'none';
-            document.getElementById('thUpdate').style.display = 'none';
-            document.getElementById('thDelete').style.display = 'none';
-        } else if(role === 'user') {
-            document.getElementById('thUpdate').style.display = 'none';
-            document.getElementById('thDelete').style.display = 'none';
+            document.querySelectorAll('.action-col').forEach(el => el.style.display = 'none');
         }
         loadData();
     }
@@ -208,7 +183,7 @@
     document.getElementById('addForm').onsubmit = async (e) => {
         e.preventDefault();
         const id = document.getElementById('reqId').value;
-        if(allData.some(r => r == id)) return alert("⚠️ رقم الأمر مكرر!");
+        if(allData.some(row => row[1] == id)) return alert("⚠️ رقم الأمر مكرر!");
 
         toggleLoad(true);
         const fd = new FormData();
@@ -216,7 +191,6 @@
         fd.append("reqLoc", document.getElementById('reqLoc').value);
         fd.append("reqDesc", document.getElementById('reqDesc').value);
         fd.append("reqStatus", document.getElementById('reqStatus').value);
-        
         await fetch(scriptURL, { method: 'POST', body: fd });
         location.reload();
     };
@@ -245,57 +219,51 @@
         const tbody = document.querySelector("#mainTable tbody");
         tbody.innerHTML = "";
         const role = sessionStorage.getItem('role');
-        const now = new Date();
-        
         let counts = { total: 0, new: 0, process: 0, done: 0 };
 
         data.slice().reverse().forEach(row => {
+            // row[0]=تاريخ، row[1]=رقم، row[2]=موقع، row[3]=وصف، row[4]=حالة
+            const dDate = new Date(row[0]);
+            const dId = row[1];
+            const dLoc = row[2];
+            const dDesc = row[3];
+            const dStatus = row[4];
+
             counts.total++;
-            const status = row;
-            const rawDate = new Date(row);
-            const diffInHours = (now - rawDate) / (1000 * 60 * 60);
+            if(dStatus === "طلب جديد") counts.new++;
+            else if(dStatus === "تحت الإجراء") counts.process++;
+            else if(dStatus === "تم العمل عليها") counts.done++;
 
-            if(status === "طلب جديد") counts.new++;
-            else if(status === "تحت الإجراء") counts.process++;
-            else if(status === "تم العمل عليها") counts.done++;
+            let badgeCls = dStatus === "طلب جديد" ? "bg-new" : dStatus === "تحت الإجراء" ? "bg-process" : dStatus === "تم العمل عليها" ? "bg-done" : "bg-manager";
+            let delayHtml = (dStatus === "تحت الإجراء" && (new Date() - dDate) / 3600000 >= 24) ? '<br><span class="delay-alert">⚠️ متأخر</span>' : '';
 
-            let badgeCls = status === "طلب جديد" ? "bg-new" : status === "تحت الإجراء" ? "bg-process" : status === "تم العمل عليها" ? "bg-done" : "bg-manager";
-            
-            let delayHtml = (status === "تحت الإجراء" && diffInHours >= 24) ? '<br><span class="delay-alert">⚠️ متأخر</span>' : '';
-
-            let actionCells = "";
-            if(role === 'admin') {
-                actionCells = `
-                    <td>
-                        <select onchange="updateStatus('${row}', this.value)" style="font-size:11px;">
-                            <option disabled selected>تغيير...</option>
-                            <option value="تم العمل عليها">تم العمل عليها</option>
-                            <option value="محولة لمدير المشروع">مدير المشروع</option>
-                            <option value="مدير الصيانة">مدير الصيانة</option>
-                        </select>
-                    </td>
-                    <td><button onclick="deleteReq('${row}')" class="btn-delete">حذف</button></td>
-                `;
-            }
+            let actionCells = role === 'admin' ? `
+                <td class="action-col">
+                    <select onchange="updateStatus('${dId}', this.value)" style="font-size:11px;">
+                        <option disabled selected>تغيير...</option>
+                        <option value="تم العمل عليها">تم العمل عليها</option>
+                        <option value="محولة لمدير المشروع">مدير المشروع</option>
+                        <option value="مدير الصيانة">مدير الصيانة</option>
+                    </select>
+                </td>
+                <td class="action-col"><button onclick="deleteReq('${dId}')" class="btn-delete">حذف</button></td>
+            ` : (role === 'viewer' ? '' : `<td class="action-col">🔒</td><td class="action-col">🔒</td>`);
 
             tbody.innerHTML += `<tr>
-                <td><strong>#${row}</strong></td>
-                <td>${row}</td>
-                <td>${new Date(row).toLocaleDateString('ar-EG')}</td>
-                <td>${row}</td>
-                <td><span class="badge ${badgeCls}">${status}</span>${delayHtml}</td>
+                <td><strong>#${dId}</strong></td>
+                <td>${dLoc}</td>
+                <td>${dDate.toLocaleDateString('ar-EG')}</td>
+                <td>${dDesc}</td>
+                <td><span class="badge ${badgeCls}">${dStatus}</span>${delayHtml}</td>
                 ${actionCells}
             </tr>`;
         });
 
-        // تحديث الإحصائيات والنسبة المئوية
         document.getElementById('totalCount').innerText = counts.total;
         document.getElementById('newCount').innerText = counts.new;
         document.getElementById('processCount').innerText = counts.process;
         document.getElementById('doneCount').innerText = counts.done;
-        
-        const kpi = counts.total > 0 ? Math.round((counts.done / counts.total) * 100) : 0;
-        document.getElementById('kpiValue').innerText = kpi + "%";
+        document.getElementById('kpiValue').innerText = counts.total > 0 ? Math.round((counts.done / counts.total) * 100) + "%" : "0%";
     }
 
     function searchTable() {
@@ -305,10 +273,9 @@
     }
 
     function exportExcel() {
-        const ws = XLSX.utils.json_to_sheet(allData.map(r => ({ "رقم الأمر": r, "الموقع": r, "التاريخ": r, "الوصف": r, "الحالة": r })));
-        const wb = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(wb, ws, "تقرير الصيانة");
-        XLSX.utils.writeFile(wb, "Report_Ahsa_Health.xlsx");
+        const ws = XLSX.utils.json_to_sheet(allData.map(r => ({ "رقم الأمر": r[1], "الموقع": r[2], "التاريخ": r[0], "الوصف": r[3], "الحالة": r[4] })));
+        const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, "Report");
+        XLSX.utils.writeFile(wb, "Maintenance_Ahsa_Report.xlsx");
     }
 
     function toggleLoad(s) { document.getElementById('loading').style.display = s ? 'flex' : 'none'; }
