@@ -2,223 +2,264 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>eng.Hussain alali-نظام الصيانة الخاص</title>
-    <!-- مكتبة لتصدير ملفات Excel -->
+    <title>نظام الصيانة الخاص-eng.Hussain alali</title>
     <script src="https://cdnjs.cloudflare.com"></script>
     <style>
-        :root {
-            --primary: #0288D1; --bg: #F1F5F9; --danger: #EF4444; --success: #10B981;
-        }
-        body { font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--bg); margin: 0; padding: 20px; min-height: 100vh; }
-        body::before {
-            content: ""; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            width: 70vw; height: 70vh; opacity: 0.04; z-index: -1;
+        :root { --primary: #0288D1; --bg: #F1F5F9; --danger: #EF4444; --success: #10B981; }
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--bg); margin: 0; padding: 0; direction: rtl; }
+        
+        /* شاشة تسجيل الدخول */
+        #loginSection { display: flex; align-items: center; justify-content: center; height: 100vh; background: #e3f2fd; }
+        .login-card { background: white; padding: 35px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); width: 350px; text-align: center; }
+        .login-card input { width: 100%; padding: 12px; margin-bottom: 15px; border: 1.5 solid #ddd; border-radius: 10px; box-sizing: border-box; }
+        .login-card button { width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 10px; cursor: pointer; font-weight: bold; }
+
+        /* الداشبورد */
+        #dashboardContent { display: none; padding: 20px; position: relative; }
+        #dashboardContent::before {
+            content: ""; position: fixed; top: 55%; left: 50%; transform: translate(-50%, -50%);
+            width: 70vw; height: 70vh; opacity: 0.04; z-index: -1; pointer-events: none;
             background: url('logo.png') no-repeat center; background-size: contain;
         }
-        .container { max-width: 1400px; margin: auto; position: relative; }
-        .header { text-align: center; border-bottom: 4px solid var(--primary); padding-bottom: 20px; margin-bottom: 30px; }
-        .logo-top { width: 320px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1)); }
-
-        /* الإحصائيات */
-        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 15px; margin-bottom: 30px; }
-        .stat-card { background: white; padding: 15px; border-radius: 15px; text-align: center; border: 3px solid #ddd; transition: 0.3s; }
-        .stat-card p { font-size: 28px; font-weight: 800; margin: 5px 0 0; }
+        .container { max-width: 1400px; margin: auto; }
+        .header { text-align: center; border-bottom: 4px solid var(--primary); padding-bottom: 15px; margin-bottom: 25px; display: flex; justify-content: space-between; align-items: center; }
+        .logo-top { width: 250px; }
         
-        /* تلوين الصفوف والحالات */
-        .row-new { border-left: 8px solid #94A3B8; }
-        .row-process { border-left: 8px solid #0288D1; }
-        .row-done { border-left: 8px solid #10B981; }
-        .row-manager { border-left: 8px solid #1565C0; }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 15px; margin-bottom: 25px; }
+        .stat-card { background: white; padding: 15px; border-radius: 15px; text-align: center; border: 3px solid #ddd; }
+        .stat-card p { font-size: 24px; font-weight: 800; margin: 5px 0 0; }
 
-        /* الصناديق */
         .box { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); margin-bottom: 20px; }
         .flex-box { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
-        input, select, button { padding: 12px; border: 1.5px solid #E2E8F0; border-radius: 10px; outline: none; }
-        button { background: var(--primary); color: white; border: none; cursor: pointer; font-weight: bold; }
-        button:hover { opacity: 0.9; }
-        .btn-export { background: #34495E; }
-
-        /* الجدول */
-        .table-box { overflow-x: auto; background: white; border-radius: 15px; }
-        table { width: 100%; border-collapse: collapse; }
-        th { background: var(--primary); color: white; padding: 15px; text-align: right; }
-        td { padding: 12px; border-bottom: 1px solid #eee; }
-        tr:hover { background: #f9f9f9; }
+        input, select, button { padding: 10px; border: 1.5px solid #E2E8F0; border-radius: 10px; outline: none; }
         
-        .search-highlight { background: #FFF9C4; padding: 2px; border-radius: 4px; }
+        .table-box { background: white; border-radius: 15px; overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; }
+        th { background: var(--primary); color: white; padding: 12px; text-align: right; }
+        td { padding: 10px; border-bottom: 1px solid #eee; font-size: 13px; }
+        
+        .badge { padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: bold; }
+        .bg-new { background: #f0f0f0; color: #666; } .bg-process { background: #e3f2fd; color: #0277bd; }
+        .bg-done { background: #e8f5e9; color: #2e7d32; } .bg-pending { background: #fff8e1; color: #f57f17; }
+        .bg-manager { background: #e8eaf6; color: #1a237e; }
+        
+        #loading { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.8); display: none; justify-content: center; align-items: center; z-index: 2000; font-weight: bold; color: var(--primary); }
+        .user-info { background: #fff; padding: 5px 15px; border-radius: 20px; border: 1px solid var(--primary); font-size: 14px; font-weight: bold; }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <div class="header">
-        <img src="***.png" class="logo-top">
-        <h2>نظام تتبع الصيانة الخاص-eng.Hussain alali</h2>
-    </div>
+<div id="loading">جاري معالجة البيانات...</div>
 
-    <div class="stats-grid" id="statsContainer">
-        <!-- تظهر تلقائياً -->
+<!-- شاشة تسجيل الدخول -->
+<div id="loginSection">
+    <div class="login-card">
+        <img src="logo.png" style="width: 120px; margin-bottom: 15px;">
+        <h3>نظام الصيانة الخاص-eng.hussain alali</h3>
+        <input type="text" id="userInput" placeholder="اسم المستخدم">
+        <input type="password" id="passInput" placeholder="كلمة المرور">
+        <button onclick="handleLogin()">تسجيل الدخول</button>
+        <p id="errorMsg" style="color:red; display:none; margin-top:10px;">خطأ في البيانات!</p>
     </div>
+</div>
 
-    <!-- إضافة طلب جديد -->
-    <div class="box">
-        <h4 style="margin-top:0">➕ تسجيل أمر عمل جديد</h4>
-        <form id="addForm" class="flex-box">
-            <input type="number" id="reqId" placeholder="رقم أمر العمل (فريد)" required>
-            <input type="text" id="reqLoc" placeholder="الموقع" required>
-            <input type="text" id="reqDesc" placeholder="الوصف" required>
-            <select id="reqStatus">
-                <option value="طلب جديد">طلب جديد</option>
-                <option value="تحت الإجراء">تحت الإجراء</option>
-            </select>
-            <button type="submit">تسجيل وحفظ</button>
-            <button type="button" class="btn-export" onclick="exportToExcel()">تصدير Excel 📊</button>
-        </form>
-    </div>
+<!-- الداشبورد الرئيسي -->
+<div id="dashboardContent">
+    <div class="container">
+        <div class="header">
+            <button onclick="logout()" style="background: #666; color:white;">خروج</button>
+            <div>
+                <img src="logo.png" class="logo-top"><br>
+                <h2 style="margin:0; color:var(--primary)">لوحة إدارة أوامر الصيانة</h2>
+            </div>
+            <div class="user-info" id="displayUser"></div>
+        </div>
 
-    <!-- البحث المتقدم -->
-    <div class="box flex-box" style="background: #E3F2FD;">
-        <strong>🔍 بحث وتعديل سريع:</strong>
-        <input type="text" id="mainSearch" onkeyup="filterData()" style="flex:1" placeholder="ابحث برقم الأمر، الموقع، أو الحالة...">
-    </div>
+        <div class="stats-grid" id="statsContainer"></div>
 
-    <div class="table-box">
-        <table id="mainTable">
-            <thead>
-                <tr>
-                    <th>رقم الأمر</th>
-                    <th>الموقع</th>
-                    <th>الوصف</th>
-                    <th>الحالة الحالية</th>
-                    <th>تحديث الحالة</th>
-                    <th>حذف</th>
-                </tr>
-            </thead>
-            <tbody></tbody>
-        </table>
+        <div class="box">
+            <h4 style="margin:0 0 15px 0">➕ إضافة أمر عمل جديد</h4>
+            <form id="addForm" class="flex-box">
+                <input type="number" id="reqId" placeholder="رقم الأمر" required>
+                <input type="text" id="reqLoc" placeholder="الموقع" required>
+                <input type="text" id="reqDesc" placeholder="الوصف" required style="flex:1">
+                <select id="reqStatus">
+                    <option value="طلب جديد">طلب جديد</option>
+                    <option value="تحت الإجراء">تحت الإجراء</option>
+                </select>
+                <button type="submit" style="background: var(--primary);">حفظ</button>
+                <button type="button" id="exportBtn" onclick="exportExcel()" style="background: #34495e; display:none;">إكسل 📊</button>
+            </form>
+        </div>
+
+        <div class="box flex-box" style="background: #e3f2fd;">
+            <strong>🔍 بحث سريع:</strong>
+            <input type="text" id="searchInp" onkeyup="searchTable()" placeholder="ابحث برقم الأمر، الموقع أو الحالة..." style="flex:1">
+        </div>
+
+        <div class="table-box">
+            <table id="mainTable">
+                <thead>
+                    <tr>
+                        <th>رقم الأمر</th>
+                        <th>الموقع</th>
+                        <th>الوصف</th>
+                        <th>الحالة</th>
+                        <th class="admin-only">تحديث الحالة</th>
+                        <th class="admin-only">إجراء</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
     </div>
 </div>
 
 <script>
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbx636VgLOF1ADdQJTINd5gAjDGiMN4z727TOwBEuQnYBrkv4OXUavDMcOW57fcc92uV/exec';
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbwVITxC7Dkv5L5wjbhyFswRuyx7w17OxibW5qofxhqU4LK34DtdD0TgQE9O8wpwy0sO/exec';
+    
+    // 🔐 قاعدة بيانات المستخدمين (يمكنك إضافة المزيد هنا)
+    const USERS = {
+        "admin": { pass: "Hussain2030", role: "admin", name: "مدير النظام" },
+        "user1": { pass: "123456@", role: "user-1", name: "موظف صيانة" }
+        "user1": { pass: "2030@", role: "user-2", name: "موظف صيانة" }
+    };
+
     let allData = [];
 
-    // 1. جلب البيانات عند الفتح
+    function handleLogin() {
+        const u = document.getElementById('userInput').value;
+        const p = document.getElementById('passInput').value;
+        if(USERS[u] && USERS[u].pass === p) {
+            sessionStorage.setItem('isLogged', 'true');
+            sessionStorage.setItem('role', USERS[u].role);
+            sessionStorage.setItem('name', USERS[u].name);
+            showDashboard();
+        } else {
+            document.getElementById('errorMsg').style.display = 'block';
+        }
+    }
+
+    function showDashboard() {
+        const role = sessionStorage.getItem('role');
+        document.getElementById('loginSection').style.display = 'none';
+        document.getElementById('dashboardContent').style.display = 'block';
+        document.getElementById('displayUser').innerText = "مرحباً: " + sessionStorage.getItem('name');
+        
+        if(role === 'admin') {
+            document.getElementById('exportBtn').style.display = 'block';
+        }
+        loadData();
+    }
+
+    function logout() { sessionStorage.clear(); location.reload(); }
+
     async function loadData() {
         const res = await fetch(scriptURL);
         allData = await res.json();
-        updateDisplay();
+        renderUI();
     }
 
-    // 2. تسجيل طلب جديد مع منع التكرار
     document.getElementById('addForm').onsubmit = async (e) => {
         e.preventDefault();
         const id = document.getElementById('reqId').value;
-        
-        // فحص التكرار محلياً قبل الإرسال لسرعة الاستجابة
-        if(allData.some(row => row[1] == id)) {
-            return alert("⚠️ خطأ: رقم أمر العمل هذا مسجل مسبقاً!");
-        }
+        if(allData.some(r => r[1] == id)) return alert("⚠️ رقم الأمر مكرر!");
 
-        const btn = e.target.querySelector('button');
-        btn.innerText = "جاري الحفظ..."; btn.disabled = true;
+        toggleLoad(true);
+        const fd = new FormData();
+        fd.append("reqId", id);
+        fd.append("reqLoc", document.getElementById('reqLoc').value);
+        fd.append("reqDesc", document.getElementById('reqDesc').value);
+        fd.append("reqStatus", document.getElementById('reqStatus').value);
 
-        const formData = new FormData();
-        formData.append("reqId", id);
-        formData.append("reqLoc", document.getElementById('reqLoc').value);
-        formData.append("reqDesc", document.getElementById('reqDesc').value);
-        formData.append("reqStatus", document.getElementById('reqStatus').value);
-
-        const res = await fetch(scriptURL, { method: 'POST', body: formData });
-        const result = await res.text();
-        
-        if(result === "Duplicate ID") alert("عذراً، الرقم مستخدم بالفعل في قاعدة البيانات!");
-        else location.reload();
+        await fetch(scriptURL, { method: 'POST', body: fd });
+        location.reload();
     };
 
-    // 3. تحديث الحالة
-    async function changeStatus(id, newStatus) {
-        const formData = new FormData();
-        formData.append("action", "updateStatus");
-        formData.append("reqId", id);
-        formData.append("newStatus", newStatus);
-        await fetch(scriptURL, { method: 'POST', body: formData });
+    async function updateStatus(id, stat) {
+        if(sessionStorage.getItem('role') !== 'admin') return alert("لا تملك صلاحية التعديل");
+        toggleLoad(true);
+        const fd = new FormData();
+        fd.append("action", "updateStatus");
+        fd.append("reqId", id);
+        fd.append("newStatus", stat);
+        await fetch(scriptURL, { method: 'POST', body: fd });
         loadData();
+        toggleLoad(false);
     }
 
-    // 4. الحذف
     async function deleteReq(id) {
-        if(!confirm("حذف نهائي لأمر العمل رقم #" + id + "؟")) return;
-        const formData = new FormData();
-        formData.append("action", "delete");
-        formData.append("reqId", id);
-        await fetch(scriptURL, { method: 'POST', body: formData });
+        if(sessionStorage.getItem('role') !== 'admin') return alert("لا تملك صلاحية الحذف");
+        if(!confirm("حذف نهائي؟")) return;
+        toggleLoad(true);
+        const fd = new FormData();
+        fd.append("action", "delete");
+        fd.append("reqId", id);
+        await fetch(scriptURL, { method: 'POST', body: fd });
         loadData();
+        toggleLoad(false);
     }
 
-    // 5. تحديث الواجهة والبحث
-    function updateDisplay(filtered = allData) {
+    function renderUI(data = allData) {
         const tbody = document.querySelector("#mainTable tbody");
         tbody.innerHTML = "";
-        
-        let counts = { "الإجمالي": 0, "طلب جديد": 0, "تحت الإجراء": 0, "تم العمل عليها": 0, "مدير المشروع": 0, "مدير الصيانة": 0 };
+        const role = sessionStorage.getItem('role');
+        let c = { "الإجمالي": 0, "طلب جديد": 0, "تحت الإجراء": 0, "تم العمل عليها": 0, "مدير الصيانة": 0 };
 
-        filtered.reverse().forEach(row => {
-            counts["الإجمالي"]++;
-            if(counts[row[4]] !== undefined) counts[row[4]]++;
+        data.slice().reverse().forEach(row => {
+            c["الإجمالي"]++;
+            if(c[row[4]] !== undefined) c[row[4]]++;
+            let badgeCls = row[4] === "طلب جديد" ? "bg-new" : row[4] === "تحت الإجراء" ? "bg-process" : row[4] === "تم العمل عليها" ? "bg-done" : "bg-manager";
 
-            let rowClass = row[4] === "طلب جديد" ? "row-new" : row[4] === "تحت الإجراء" ? "row-process" : row[4] === "مدير الصيانة" ? "row-manager" : "row-done";
+            let actionCells = role === 'admin' ? `
+                <td>
+                    <select onchange="updateStatus('${row[1]}', this.value)">
+                        <option disabled selected>تعديل...</option>
+                        <option value="تم العمل عليها">تم العمل عليها</option>
+                        <option value="محولة لمدير المشروع">مدير المشروع</option>
+                        <option value="مدير الصيانة">مدير الصيانة</option>
+                    </select>
+                </td>
+                <td><button onclick="deleteReq('${row[1]}')" style="background:var(--danger); color:white; border:none; padding:5px; border-radius:5px; cursor:pointer">حذف</button></td>
+            ` : `<td>🔒</td><td>🔒</td>`;
 
-            tbody.innerHTML += `
-                <tr class="${rowClass}">
-                    <td><strong>#${row[1]}</strong></td>
-                    <td>${row[2]}</td>
-                    <td>${row[3]}</td>
-                    <td><span style="font-weight:bold; color:var(--primary)">${row[4]}</span></td>
-                    <td>
-                        <select onchange="changeStatus('${row[1]}', this.value)">
-                            <option value="" selected disabled>تغيير إلى...</option>
-                            <option value="طلب جديد">طلب جديد</option>
-                            <option value="تحت الإجراء">تحت الإجراء</option>
-                            <option value="تم العمل عليها">تم العمل عليها</option>
-                            <option value="محولة لمدير المشروع">محولة لمدير المشروع</option>
-                            <option value="مدير الصيانة">مدير الصيانة</option>
-                        </select>
-                    </td>
-                    <td><button onclick="deleteReq('${row[1]}')" style="background:var(--danger); padding:5px 10px">🗑️</button></td>
-                </tr>`;
+            tbody.innerHTML += `<tr>
+                <td><strong>#${row[1]}</strong></td>
+                <td>${row[2]}</td>
+                <td>${row[3]}</td>
+                <td><span class="badge ${badgeCls}">${row[4]}</span></td>
+                ${actionCells}
+            </tr>`;
         });
-
-        // تحديث كروت الإحصائيات
-        const statsHtml = Object.keys(counts).map(key => `
-            <div class="stat-card" style="border-color:${getColor(key)}">
-                <h3>${key}</h3>
-                <p style="color:${getColor(key)}">${counts[key]}</p>
-            </div>`).join('');
-        document.getElementById('statsContainer').innerHTML = statsHtml;
+        renderStats(c);
     }
 
-    function getColor(key) {
-        const colors = { "الإجمالي": "#0288D1", "طلب جديد": "#94A3B8", "تحت الإجراء": "#00B0FF", "تم العمل عليها": "#10B981", "مدير الصيانة": "#1565C0", "مدير المشروع": "#F59E0B" };
-        return colors[key] || "#000";
+    function renderStats(c) {
+        let h = "";
+        for(let k in c) h += `<div class="stat-card" style="border-color:${getColor(k)}"><h3>${k}</h3><p style="color:${getColor(k)}">${c[k]}</p></div>`;
+        document.getElementById('statsContainer').innerHTML = h;
     }
 
-    // 6. فلترة البحث السريع
-    function filterData() {
-        const val = document.getElementById("mainSearch").value.toLowerCase();
-        const filtered = allData.filter(row => row.join(" ").toLowerCase().includes(val));
-        updateDisplay(filtered);
+    function getColor(k) {
+        const m = { "الإجمالي": "#0288D1", "طلب جديد": "#94A3B8", "تحت الإجراء": "#00B0FF", "تم العمل عليها": "#10B981", "مدير الصيانة": "#1565C0" };
+        return m[k] || "#333";
     }
 
-    // 7. تصدير Excel
-    function exportToExcel() {
-        const ws = XLSX.utils.json_to_sheet(allData.map(r => ({ "التاريخ": r[0], "رقم الأمر": r[1], "الموقع": r[2], "الوصف": r[3], "الحالة": r[4] })));
+    function searchTable() {
+        const v = document.getElementById("searchInp").value.toLowerCase();
+        const f = allData.filter(r => r.join(" ").toLowerCase().includes(v));
+        renderUI(f);
+    }
+
+    function exportExcel() {
+        const ws = XLSX.utils.json_to_sheet(allData.map(r => ({ "التاريخ": r[0], "رقم الطلب": r[1], "الموقع": r[2], "الوصف": r[3], "الحالة": r[4] })));
         const wb = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(wb, ws, "طلبات الصيانة");
-        XLSX.utils.writeFile(wb, "تقرير_صيانة_تجمع_الأحساء.xlsx");
+        XLSX.utils.book_append_sheet(wb, ws, "Maintenance");
+        XLSX.utils.writeFile(wb, "Maintenance_Report_Ahsa.xlsx");
     }
 
-    window.onload = loadData;
+    function toggleLoad(s) { document.getElementById('loading').style.display = s ? 'flex' : 'none'; }
+    window.onload = () => { if(sessionStorage.getItem('isLogged')) showDashboard(); };
 </script>
 </body>
 </html>
