@@ -2,96 +2,92 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>eng.Hussain alali-نظام الصيانة</title>
-    <!-- مكتبة لتصدير ملفات Excel -->
-    <script src="https://cdnjs.cloudflare.com"></script>
+    <title>نظام إدارة طلبات الصيانة-eng.hussain alali</title>
     <style>
         :root {
-            --primary: #0288D1; --bg: #F1F5F9; --danger: #EF4444; --success: #10B981;
+            --primary-blue: #0288D1; --light-blue: #E3F2FD; --new-request: #94A3B8;
+            --accent-blue: #00B0FF; --maintenance-manager: #1565C0; --success-green: #10B981;
+            --pending-orange: #F59E0B; --bg-gray: #F8FAFC; --text-dark: #1E293B;
         }
-        body { font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--bg); margin: 0; padding: 20px; min-height: 100vh; }
+        body { font-family: 'Segoe UI', sans-serif; background-color: var(--bg-gray); margin: 0; padding: 20px; min-height: 100vh; position: relative; }
         body::before {
-            content: ""; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            width: 70vw; height: 70vh; opacity: 0.04; z-index: -1;
-            background: url('logo.png') no-repeat center; background-size: contain;
+            content: ""; position: fixed; top: 55%; left: 50%; transform: translate(-50%, -50%);
+            width: 80vw; height: 80vh; opacity: 0.03; z-index: -1; pointer-events: none;
+            background-image: url('logo.png'); background-repeat: no-repeat; background-position: center; background-size: contain;
         }
-        .container { max-width: 1400px; margin: auto; position: relative; }
-        .header { text-align: center; border-bottom: 4px solid var(--primary); padding-bottom: 20px; margin-bottom: 30px; }
-        .logo-top { width: 320px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1)); }
-
-        /* الإحصائيات */
-        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 15px; margin-bottom: 30px; }
-        .stat-card { background: white; padding: 15px; border-radius: 15px; text-align: center; border: 3px solid #ddd; transition: 0.3s; }
-        .stat-card p { font-size: 28px; font-weight: 800; margin: 5px 0 0; }
+        .container { max-width: 1350px; margin: auto; position: relative; z-index: 1; }
+        .header { text-align: center; margin-bottom: 30px; border-bottom: 4px solid var(--primary-blue); padding-bottom: 15px; }
+        .logo-top { width: 350px; height: auto; filter: drop-shadow(0px 4px 8px rgba(0, 136, 209, 0.2)); }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-bottom: 30px; }
+        .stat-card { background: white; padding: 20px 10px; border-radius: 18px; text-align: center; box-shadow: 0 8px 20px rgba(0,0,0,0.06); border: 3px solid transparent; }
+        .stat-card p { font-size: 26px; font-weight: 800; margin: 10px 0 0; }
+        .card-total { border-color: var(--primary-blue); color: var(--primary-blue); }
+        .card-new { border-color: var(--new-request); color: var(--new-request); }
+        .card-process { border-color: var(--accent-blue); color: var(--accent-blue); }
+        .card-done { border-color: var(--success-green); color: var(--success-green); }
+        .card-pending { border-color: var(--pending-orange); color: var(--pending-orange); }
+        .card-manager { border-color: var(--maintenance-manager); color: var(--maintenance-manager); }
         
-        /* تلوين الصفوف والحالات */
-        .row-new { border-left: 8px solid #94A3B8; }
-        .row-process { border-left: 8px solid #0288D1; }
-        .row-done { border-left: 8px solid #10B981; }
-        .row-manager { border-left: 8px solid #1565C0; }
+        .input-box, .search-box { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.04); margin-bottom: 20px; display: flex; gap: 10px; flex-wrap: wrap; }
+        input, select, button { padding: 10px; border: 1.5px solid #E2E8F0; border-radius: 10px; outline: none; }
+        button { background-color: var(--primary-blue); color: white; border: none; cursor: pointer; font-weight: bold; }
 
-        /* الصناديق */
-        .box { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); margin-bottom: 20px; }
-        .flex-box { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
-        input, select, button { padding: 12px; border: 1.5px solid #E2E8F0; border-radius: 10px; outline: none; }
-        button { background: var(--primary); color: white; border: none; cursor: pointer; font-weight: bold; }
-        button:hover { opacity: 0.9; }
-        .btn-export { background: #34495E; }
-
-        /* الجدول */
-        .table-box { overflow-x: auto; background: white; border-radius: 15px; }
+        /* تنسيق الجدول والتحكم بالحالة */
+        .table-box { background: white; border-radius: 15px; box-shadow: 0 5px 25px rgba(0,0,0,0.05); overflow: hidden; }
         table { width: 100%; border-collapse: collapse; }
-        th { background: var(--primary); color: white; padding: 15px; text-align: right; }
-        td { padding: 12px; border-bottom: 1px solid #eee; }
-        tr:hover { background: #f9f9f9; }
+        th { background-color: var(--primary-blue); color: white; padding: 15px; text-align: right; }
+        td { padding: 12px; border-bottom: 1px solid #F1F5F9; font-size: 14px; }
         
-        .search-highlight { background: #FFF9C4; padding: 2px; border-radius: 4px; }
+        .status-select { font-size: 12px; padding: 5px; border-radius: 5px; cursor: pointer; border: 1px solid #ddd; width: 130px; }
+        .btn-delete { background: #ff4d4d; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; font-size: 12px; }
+        
+        .badge { padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: bold; display: inline-block; margin-bottom: 5px; }
+        .bg-new { background: #f0f0f0; color: #666; }
+        .bg-process { background: #e3f2fd; color: #0277bd; }
+        .bg-done { background: #e8f5e9; color: #2e7d32; }
+        .bg-pending { background: #fff8e1; color: #f57f17; }
+        .bg-manager { background: #e8eaf6; color: #1a237e; }
     </style>
 </head>
 <body>
-
 <div class="container">
     <div class="header">
         <img src="logo.png" class="logo-top">
-        <h2>نظام إدارة أوامر الصيانة الذكي</h2>
+        <h2>Eng.Hussain AlALI-المهندس حسين العلي</h2>
     </div>
 
-    <div class="stats-grid" id="statsContainer">
-        <!-- تظهر تلقائياً -->
+    <!-- الإحصائيات -->
+    <div class="stats-grid" id="statsGrid">
+        <div class="stat-card card-total"><h3>الإجمالي</h3><p id="totalCount">0</p></div>
+        <div class="stat-card card-new"><h3>جديد</h3><p id="newCount">0</p></div>
+        <div class="stat-card card-process"><h3>تحت الإجراء</h3><p id="processCount">0</p></div>
+        <div class="stat-card card-done"><h3>مغلق</h3><p id="doneCount">0</p></div>
+        <div class="stat-card card-pending"><h3>مدير المشروع</h3><p id="pendingCount">0</p></div>
+        <div class="stat-card card-manager"><h3>مدير الصيانة</h3><p id="managerCount">0</p></div>
     </div>
 
-    <!-- إضافة طلب جديد -->
-    <div class="box">
-        <h4 style="margin-top:0">➕ تسجيل أمر عمل جديد</h4>
-        <form id="addForm" class="flex-box">
-            <input type="number" id="reqId" placeholder="رقم أمر العمل (فريد)" required>
-            <input type="text" id="reqLoc" placeholder="الموقع" required>
-            <input type="text" id="reqDesc" placeholder="الوصف" required>
-            <select id="reqStatus">
-                <option value="طلب جديد">طلب جديد</option>
-                <option value="تحت الإجراء">تحت الإجراء</option>
-            </select>
-            <button type="submit">تسجيل وحفظ</button>
-            <button type="button" class="btn-export" onclick="exportToExcel()">تصدير Excel 📊</button>
-        </form>
-    </div>
-
-    <!-- البحث المتقدم -->
-    <div class="box flex-box" style="background: #E3F2FD;">
-        <strong>🔍 بحث وتعديل سريع:</strong>
-        <input type="text" id="mainSearch" onkeyup="filterData()" style="flex:1" placeholder="ابحث برقم الأمر، الموقع، أو الحالة...">
-    </div>
+    <!-- نموذج الإضافة -->
+    <form id="maintenanceForm" class="input-box">
+        <input type="number" name="reqId" id="reqId" placeholder="رقم الطلب" required>
+        <input type="text" name="reqLoc" id="reqLoc" placeholder="الموقع" required>
+        <input type="text" name="reqDesc" id="reqDesc" placeholder="الوصف" required>
+        <select name="reqStatus" id="reqStatus">
+            <option value="طلب جديد">طلب جديد</option>
+            <option value="تحت الإجراء">تحت الإجراء</option>
+        </select>
+        <button type="submit" id="submitBtn">تسجيل الطلب</button>
+    </form>
 
     <div class="table-box">
-        <table id="mainTable">
+        <table id="reqTable">
             <thead>
                 <tr>
-                    <th>رقم الأمر</th>
+                    <th>رقم الطلب</th>
                     <th>الموقع</th>
                     <th>الوصف</th>
                     <th>الحالة الحالية</th>
-                    <th>تحديث الحالة</th>
-                    <th>حذف</th>
+                    <th>تغيير الحالة</th>
+                    <th>إجراء</th>
                 </tr>
             </thead>
             <tbody></tbody>
@@ -100,84 +96,70 @@
 </div>
 
 <script>
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbxz4rFF8z9pI4iYGz8YMNqY1KijQf0dXpM3Emc3jgjSGnJlLzA4KBXP5XJZPBhdL9-8/exec';
-    let allData = [];
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbyasOlB54LWINZm88KFfPG2xaoNpx_yElsnmYX7ytiDGXurNQljIteG6SJulSaYZzRG/exec';
+    let requests = [];
 
-    // 1. جلب البيانات عند الفتح
-    async function loadData() {
-        const res = await fetch(scriptURL);
-        allData = await res.json();
-        updateDisplay();
+    // تحميل البيانات
+    function loadData() {
+        fetch(scriptURL).then(res => res.json()).then(data => {
+            requests = data;
+            updateUI();
+        });
     }
 
-    // 2. تسجيل طلب جديد مع منع التكرار
-    document.getElementById('addForm').onsubmit = async (e) => {
+    // تسجيل طلب جديد
+    document.getElementById('maintenanceForm').addEventListener('submit', e => {
         e.preventDefault();
-        const id = document.getElementById('reqId').value;
-        
-        // فحص التكرار محلياً قبل الإرسال لسرعة الاستجابة
-        if(allData.some(row => row[1] == id)) {
-            return alert("⚠️ خطأ: رقم أمر العمل هذا مسجل مسبقاً!");
-        }
+        const formData = new FormData(e.target);
+        fetch(scriptURL, { method: 'POST', body: formData }).then(() => {
+            e.target.reset();
+            loadData();
+        });
+    });
 
-        const btn = e.target.querySelector('button');
-        btn.innerText = "جاري الحفظ..."; btn.disabled = true;
-
-        const formData = new FormData();
-        formData.append("reqId", id);
-        formData.append("reqLoc", document.getElementById('reqLoc').value);
-        formData.append("reqDesc", document.getElementById('reqDesc').value);
-        formData.append("reqStatus", document.getElementById('reqStatus').value);
-
-        const res = await fetch(scriptURL, { method: 'POST', body: formData });
-        const result = await res.text();
-        
-        if(result === "Duplicate ID") alert("عذراً، الرقم مستخدم بالفعل في قاعدة البيانات!");
-        else location.reload();
-    };
-
-    // 3. تحديث الحالة
-    async function changeStatus(id, newStatus) {
+    // تحديث الحالة من الجدول
+    function changeStatus(id, newStatus) {
         const formData = new FormData();
         formData.append("action", "updateStatus");
         formData.append("reqId", id);
         formData.append("newStatus", newStatus);
-        await fetch(scriptURL, { method: 'POST', body: formData });
-        loadData();
+
+        fetch(scriptURL, { method: 'POST', body: formData }).then(() => loadData());
     }
 
-    // 4. الحذف
-    async function deleteReq(id) {
-        if(!confirm("حذف نهائي لأمر العمل رقم #" + id + "؟")) return;
+    // حذف طلب
+    function deleteReq(id) {
+        if(!confirm("حذف الطلب نهائياً؟")) return;
         const formData = new FormData();
         formData.append("action", "delete");
         formData.append("reqId", id);
-        await fetch(scriptURL, { method: 'POST', body: formData });
-        loadData();
+        fetch(scriptURL, { method: 'POST', body: formData }).then(() => loadData());
     }
 
-    // 5. تحديث الواجهة والبحث
-    function updateDisplay(filtered = allData) {
-        const tbody = document.querySelector("#mainTable tbody");
+    function updateUI() {
+        const tbody = document.querySelector("#reqTable tbody");
         tbody.innerHTML = "";
-        
-        let counts = { "الإجمالي": 0, "طلب جديد": 0, "تحت الإجراء": 0, "تم العمل عليها": 0, "مدير المشروع": 0, "مدير الصيانة": 0 };
+        let counts = { total: 0, new: 0, process: 0, done: 0, pending: 0, manager: 0 };
 
-        filtered.reverse().forEach(row => {
-            counts["الإجمالي"]++;
-            if(counts[row[4]] !== undefined) counts[row[4]]++;
-
-            let rowClass = row[4] === "طلب جديد" ? "row-new" : row[4] === "تحت الإجراء" ? "row-process" : row[4] === "مدير الصيانة" ? "row-manager" : "row-done";
+        requests.forEach(row => {
+            counts.total++;
+            let status = row[4];
+            let cls = "";
+            if(status === "طلب جديد") { counts.new++; cls="bg-new"; }
+            else if(status === "تحت الإجراء") { counts.process++; cls="bg-process"; }
+            else if(status === "تم العمل عليها") { counts.done++; cls="bg-done"; }
+            else if(status === "محولة لمدير المشروع") { counts.pending++; cls="bg-pending"; }
+            else if(status === "مدير الصيانة") { counts.manager++; cls="bg-manager"; }
 
             tbody.innerHTML += `
-                <tr class="${rowClass}">
+                <tr>
                     <td><strong>#${row[1]}</strong></td>
                     <td>${row[2]}</td>
                     <td>${row[3]}</td>
-                    <td><span style="font-weight:bold; color:var(--primary)">${row[4]}</span></td>
+                    <td><span class="badge ${cls}">${status}</span></td>
                     <td>
-                        <select onchange="changeStatus('${row[1]}', this.value)">
-                            <option value="" selected disabled>تغيير إلى...</option>
+                        <select class="status-select" onchange="changeStatus('${row[1]}', this.value)">
+                            <option value="" disabled selected>اختر حالة جديدة</option>
                             <option value="طلب جديد">طلب جديد</option>
                             <option value="تحت الإجراء">تحت الإجراء</option>
                             <option value="تم العمل عليها">تم العمل عليها</option>
@@ -185,37 +167,16 @@
                             <option value="مدير الصيانة">مدير الصيانة</option>
                         </select>
                     </td>
-                    <td><button onclick="deleteReq('${row[1]}')" style="background:var(--danger); padding:5px 10px">🗑️</button></td>
+                    <td><button class="btn-delete" onclick="deleteReq('${row[1]}')">حذف</button></td>
                 </tr>`;
         });
 
-        // تحديث كروت الإحصائيات
-        const statsHtml = Object.keys(counts).map(key => `
-            <div class="stat-card" style="border-color:${getColor(key)}">
-                <h3>${key}</h3>
-                <p style="color:${getColor(key)}">${counts[key]}</p>
-            </div>`).join('');
-        document.getElementById('statsContainer').innerHTML = statsHtml;
-    }
-
-    function getColor(key) {
-        const colors = { "الإجمالي": "#0288D1", "طلب جديد": "#94A3B8", "تحت الإجراء": "#00B0FF", "تم العمل عليها": "#10B981", "مدير الصيانة": "#1565C0", "مدير المشروع": "#F59E0B" };
-        return colors[key] || "#000";
-    }
-
-    // 6. فلترة البحث السريع
-    function filterData() {
-        const val = document.getElementById("mainSearch").value.toLowerCase();
-        const filtered = allData.filter(row => row.join(" ").toLowerCase().includes(val));
-        updateDisplay(filtered);
-    }
-
-    // 7. تصدير Excel
-    function exportToExcel() {
-        const ws = XLSX.utils.json_to_sheet(allData.map(r => ({ "التاريخ": r[0], "رقم الأمر": r[1], "الموقع": r[2], "الوصف": r[3], "الحالة": r[4] })));
-        const wb = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(wb, ws, "طلبات الصيانة");
-        XLSX.utils.writeFile(wb, "تقرير الصيانة مستشفى الولادة والاطفال.xlsx");
+        document.getElementById('totalCount').innerText = counts.total;
+        document.getElementById('newCount').innerText = counts.new;
+        document.getElementById('processCount').innerText = counts.process;
+        document.getElementById('doneCount').innerText = counts.done;
+        document.getElementById('pendingCount').innerText = counts.pending;
+        document.getElementById('managerCount').innerText = counts.manager;
     }
 
     window.onload = loadData;
