@@ -118,8 +118,8 @@
             <table id="mainTable">
                 <thead>
                     <tr>
-                        <th>رقم الأمر</th>
-                        <th>المكان</th>
+                        <th>رقم أمر العمل</th>
+                        <th>الموقع</th>
                         <th>التاريخ</th>
                         <th>الوصف</th>
                         <th>الحالة</th>
@@ -138,22 +138,42 @@
     const _0xUrl = 'https://script.google.com/macros/s/AKfycbyJ26iSnnZyOoTFGhNS8aoSb-I_d7un5M_4lmx3IH1b_zCCJYs0585zjB9Zds-WWYgd/exec'; 
     
     const _0xUsers = { 
-        "admin": { p: "ahsa2024", n: "م. حسين" }, 
-        "user1": { p: "11332030@", n: "الفني" } 
-    };
+    "admin": { p: "ahsa2024", r: "admin", n: "م. حسين" }, 
+    "user1": { p: "11332030@", r: "user", n: "الفني" }, 
+    "viewer1": { p: "2030", r: "viewer", n: "المراقب العام" } 
+};
 
     let currentSite = 'A', allRecords = [];
 
     function handleLogin() {
-        const u = document.getElementById('userInput').value;
-        const p = document.getElementById('passInput').value;
-        if(_0xUsers[u] && _0xUsers[u].p === p) {
-            document.getElementById('loginSection').style.display = 'none';
-            document.getElementById('dashboard').style.display = 'block';
-            document.getElementById('uName').innerText = _0xUsers[u].n;
-            fetchData();
-        } else { alert("بيانات الدخول خاطئة!"); }
+    const u = document.getElementById('userInput').value;
+    const p = document.getElementById('passInput').value;
+    
+    if(_0xUsers[u] && _0xUsers[u].p === p) {
+        const user = _0xUsers[u];
+        document.getElementById('loginSection').style.display = 'none';
+        document.getElementById('dashboard').style.display = 'block';
+        document.getElementById('uName').innerText = user.n;
+
+        // --- نظام الصلاحيات الجديد ---
+        if(user.r === "viewer") {
+            // إخفاء صندوق الإضافة
+            document.getElementById('addBox').style.display = 'none';
+            // إضافة ستايل لإخفاء أعمدة التعديل والحذف في الجدول
+            const style = document.createElement('style');
+            style.innerHTML = `
+                .action-col, th:nth-child(6), th:nth-child(7), 
+                td:nth-child(6), td:nth-child(7) { display: none !important; }
+            `;
+            document.head.appendChild(style);
+        }
+        // ---------------------------
+
+        fetchData();
+    } else {
+        alert("بيانات الدخول خاطئة!");
     }
+}
 
     function switchSite(val) {
         currentSite = val;
