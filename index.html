@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>نظام صيانة تجمع الأحساء الصحي - النسخة المحمية V2</title>
+    <title>نظام الصيانة الخاص</title>
     <script src="https://cdnjs.cloudflare.com"></script>
     <style>
         :root { --primary: #0288D1; --sky: #E3F2FD; --dark-blue: #1565C0; --success: #10B981; --warning: #F59E0B; --danger: #EF4444; --gray: #94A3B8; }
-        body { font-family: 'Segoe UI', Tahoma, sans-serif; background: #F4F7F9; margin: 0; padding: 0; -webkit-user-select: none; user-select: none; }
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; background: #F4F7F9; margin: 0; padding: 0; user-select: none; -webkit-user-select: none; }
         #loginSection { display: flex; align-items: center; justify-content: center; height: 100vh; background: linear-gradient(135deg, var(--sky), #fff); }
         .login-card { background: white; padding: 40px; border-radius: 25px; box-shadow: 0 20px 50px rgba(2, 136, 209, 0.1); width: 380px; text-align: center; border: 1px solid var(--sky); }
         .login-card input { width: 100%; padding: 14px; margin-bottom: 15px; border: 2px solid #F1F5F9; border-radius: 12px; box-sizing: border-box; outline: none; }
@@ -18,7 +18,7 @@
         .header { display: flex; justify-content: space-between; align-items: center; background: white; padding: 15px 25px; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 25px; border-right: 8px solid var(--primary); }
         .logo-main { width: 180px; }
         .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 15px; margin-bottom: 25px; }
-        .stat-card { background: white; padding: 15px; border-radius: 20px; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.03); border: 1px solid #eee; border-top: 5px solid var(--gray); transition: 0.3s; }
+        .stat-card { background: white; padding: 15px; border-radius: 20px; text-align: center; border-top: 5px solid var(--gray); box-shadow: 0 4px 10px rgba(0,0,0,0.03); transition: 0.3s; }
         .stat-card p { font-size: 28px; font-weight: 800; margin: 8px 0 0; color: var(--dark-blue); }
         .border-total { border-top-color: var(--primary); } .border-new { border-top-color: var(--gray); } .border-process { border-top-color: #00B0FF; } .border-done { border-top-color: var(--success); } .border-pending { border-top-color: var(--warning); } .border-manager { border-top-color: var(--dark-blue); }
         .kpi-box { background: var(--dark-blue); color: white; padding: 15px; border-radius: 20px; text-align: center; display: flex; flex-direction: column; justify-content: center; }
@@ -28,25 +28,24 @@
         table { width: 100%; border-collapse: collapse; }
         th { background: var(--primary); color: white; padding: 15px; text-align: right; font-size: 14px; }
         td { padding: 12px; border-bottom: 1px solid #F1F5F9; font-size: 13px; }
-        tr:hover { background: var(--sky); }
         .badge { padding: 5px 10px; border-radius: 8px; font-size: 11px; font-weight: 700; display: inline-block; }
         .bg-new { background: #F1F5F9; color: #64748B; } .bg-process { background: #E0F2FE; color: #0369A1; } .bg-done { background: #DCFCE7; color: #15803D; } .bg-pending { background: #FEF3C7; color: #92400E; } .bg-manager { background: #E8EAF6; color: #3F51B5; }
         .delay-alert { color: #B91C1C; font-weight: bold; font-size: 11px; animation: pulse 1.5s infinite; }
         @keyframes pulse { 0%, 100% {opacity: 1;} 50% {opacity: 0.5;} }
         button { padding: 10px 20px; border-radius: 10px; border: none; font-weight: bold; cursor: pointer; transition: 0.2s; }
         .btn-main { background: var(--primary); color: white; } .btn-export { background: #34495E; color: white; } .btn-delete { background: var(--danger); color: white; padding: 5px 10px; font-size: 11px; }
-        #loading { position: fixed; bottom: 20px; left: 20px; background: var(--dark-blue); color: white; padding: 10px 20px; border-radius: 30px; display: none; z-index: 9999; box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
+        #sync-loader { position: fixed; bottom: 20px; left: 20px; background: var(--dark-blue); color: white; padding: 10px 25px; border-radius: 30px; display: none; z-index: 9999; box-shadow: 0 5px 15px rgba(0,0,0,0.2); font-weight: bold; }
     </style>
 </head>
 <body oncontextmenu="return false;">
 
-<div id="loading">⏳ جاري المزامنة في الخلفية...</div>
+<div id="sync-loader">⏳ جاري المزامنة في الخلفية...</div>
 
 <div id="loginSection">
     <div class="login-card">
         <img src="logo.png" style="width: 140px; margin-bottom: 15px;" onerror="this.style.display='none'">
-        <h2 style="color:var(--dark-blue); margin:0;">نظام الصيانة الذكي</h2>
-        <p style="color:var(--gray); margin-bottom:20px;">تجمع الأحساء الصحي</p>
+        <h2 style="color:var(--dark-blue); margin:0;">نظام الصيانة الخاص-eng.Hussain alali</h2>
+        <p style="color:var(--gray); margin-bottom:20px;">eng.Hussain alali</p>
         <input type="text" id="userInput" placeholder="اسم المستخدم">
         <input type="password" id="passInput" placeholder="كلمة المرور">
         <button onclick="handleLogin()">دخول النظام</button>
@@ -75,30 +74,32 @@
             <form id="addForm" class="flex-box">
                 <input type="number" id="reqId" placeholder="رقم الأمر" required style="width:120px;"><input type="text" id="reqLoc" placeholder="الموقع" required><input type="text" id="reqDesc" placeholder="الوصف" required style="flex:1">
                 <select id="reqStatus"><option value="طلب جديد">طلب جديد</option><option value="تحت الإجراء">تحت الإجراء</option></select>
-                <button type="submit" class="btn-main">حفظ وإرسال</button>
+                <button type="submit" class="btn-main">حفظ سريع</button>
             </form>
         </div>
-        <div class="box flex-box"><strong>🔍 البحث السريع:</strong><input type="text" id="searchInp" onkeyup="searchTable()" placeholder="ابحث برقم الأمر، الموقع، أو الحالة..." style="flex:1"><button onclick="exportExcel()" class="btn-export">تصدير إكسل 📊</button></div>
+        <div class="box flex-box"><strong>🔍 البحث السريع:</strong><input type="text" id="searchInp" onkeyup="searchTable()" placeholder="ابحث..." style="flex:1"><button onclick="exportExcel()" class="btn-export">تصدير إكسل 📊</button></div>
         <div class="table-box"><table id="mainTable"><thead><tr><th>رقم الأمر</th><th>الموقع</th><th>التاريخ</th><th>الوصف</th><th>الحالة</th><th class="action-col">تحديث</th><th class="action-col">إجراء</th></tr></thead><tbody></tbody></table></div>
     </div>
 </div>
 
 <script>
-    // 🔒 التشفير والحماية
-    const _0x5a1e = 'https://script.google.com';
-    const _0x2b4c = { "admin": { p: "ahsa2024", r: "admin", n: "المدير" }, "user1": { p: "11332030@", r: "user", n: "الفني" }, "viewer1": { p: "2030", r: "viewer", n: "المراقب" } };
+    // 🔒 البيانات المشفرة والحماية
+    const _0xUrl = 'https://script.google.com/macros/s/AKfycbxT5lzz-P1ZpTcb9_s4rzPg8lXOzYqwY8neD3RitBXLqxBo0KgUGUp2V4c-aKe0o1U/exec'; 
+    const _0xUsers = { 
+        "admin": { p: "ahsa2024", r: "admin", n: "المدير" }, 
+        "user1": { p: "11332030@", r: "user", n: "الفني" }, 
+        "viewer1": { p: "2030", r: "viewer", n: "المراقب" } 
+    };
 
     let allData = [];
 
+    // منع اختصارات المطورين
     document.onkeydown = function(e) { if(e.keyCode == 123 || (e.ctrlKey && e.shiftKey && e.keyCode == 73) || (e.ctrlKey && e.keyCode == 85)) return false; };
 
     function handleLogin() {
-        const u = document.getElementById('userInput').value;
-        const p = document.getElementById('passInput').value;
-        if(_0x2b4c[u] && _0x2b4c[u].p === p) {
-            sessionStorage.setItem('isLogged', 'true');
-            sessionStorage.setItem('role', _0x2b4c[u].r);
-            sessionStorage.setItem('name', _0x2b4c[u].n);
+        const u = document.getElementById('userInput').value, p = document.getElementById('passInput').value;
+        if(_0xUsers[u] && _0xUsers[u].p === p) {
+            sessionStorage.setItem('isLogged', 'true'); sessionStorage.setItem('role', _0xUsers[u].r); sessionStorage.setItem('name', _0xUsers[u].n);
             startApp();
         } else { document.getElementById('errorMsg').style.display = 'block'; }
     }
@@ -113,68 +114,60 @@
         loadData();
     }
 
-    async function loadData() { try { const res = await fetch(_0x5a1e); allData = await res.json(); renderUI(); } catch(e) {} }
+    async function loadData() { try { const res = await fetch(_0xUrl); allData = await res.json(); renderUI(); } catch(e) {} }
 
-    // 🚀 الإرسال في الخلفية (Background Sync)
+    // 🚀 الإرسال الفوري في الخلفية
     document.getElementById('addForm').onsubmit = function(e) {
         e.preventDefault();
-        const id = document.getElementById('reqId').value;
-        const loc = document.getElementById('reqLoc').value;
-        const desc = document.getElementById('reqDesc').value;
-        const stat = document.getElementById('reqStatus').value;
-
+        const id = document.getElementById('reqId').value, loc = document.getElementById('reqLoc').value, desc = document.getElementById('reqDesc').value, stat = document.getElementById('reqStatus').value;
         if(allData.some(row => row[1] == id)) return alert("⚠️ رقم الأمر مكرر!");
 
-        // التحديث المحلي الفوري
-        const tempRow = [new Date().toISOString(), id, loc, desc, stat];
-        allData.push(tempRow);
+        // تحديث الواجهة محلياً فوراً
+        allData.push([new Date().toISOString(), id, loc, desc, stat]);
         renderUI();
-        
-        // تفريغ الحقول والتركيز للطلب التالي
         document.getElementById('addForm').reset();
         document.getElementById('reqId').focus();
-        document.getElementById('reqStatus').value = "طلب جديد";
 
-        // المزامنة في الخلفية
-        document.getElementById('loading').style.display = 'block';
-        const fd = new FormData();
-        fd.append("reqId", id); fd.append("reqLoc", loc); fd.append("reqDesc", desc); fd.append("reqStatus", stat);
-        
-        fetch(_0x5a1e, { method: 'POST', body: fd }).then(() => {
-            document.getElementById('loading').style.display = 'none';
-            console.log("Synced ✅");
-        }).catch(() => alert("فشل المزامنة، تحقق من الإنترنت"));
+        // مزامنة صامتة في الخلفية
+        document.getElementById('sync-loader').style.display = 'block';
+        const fd = new FormData(); fd.append("reqId", id); fd.append("reqLoc", loc); fd.append("reqDesc", desc); fd.append("reqStatus", stat);
+        fetch(_0xUrl, { method: 'POST', body: fd }).then(() => { document.getElementById('sync-loader').style.display = 'none'; });
     };
 
     async function updateStatus(id, stat) {
-        document.getElementById('loading').style.display = 'block';
+        document.getElementById('sync-loader').style.display = 'block';
         const fd = new FormData(); fd.append("action", "updateStatus"); fd.append("reqId", id); fd.append("newStatus", stat);
-        await fetch(_0x5a1e, { method: 'POST', body: fd });
-        loadData();
-        document.getElementById('loading').style.display = 'none';
+        await fetch(_0xUrl, { method: 'POST', body: fd });
+        loadData(); document.getElementById('sync-loader').style.display = 'none';
     }
 
     async function deleteReq(id) {
         if(!confirm("حذف نهائي؟")) return;
-        document.getElementById('loading').style.display = 'block';
+        document.getElementById('sync-loader').style.display = 'block';
         const fd = new FormData(); fd.append("action", "delete"); fd.append("reqId", id);
-        await fetch(_0x5a1e, { method: 'POST', body: fd });
-        loadData();
-        document.getElementById('loading').style.display = 'none';
+        await fetch(_0xUrl, { method: 'POST', body: fd });
+        loadData(); document.getElementById('sync-loader').style.display = 'none';
     }
 
     function renderUI(data = allData) {
         const tbody = document.querySelector("#mainTable tbody"); tbody.innerHTML = "";
         const role = sessionStorage.getItem('role');
+        const now = new Date();
         let c = { t: 0, n: 0, p: 0, d: 0, pj: 0, m: 0 };
+
         data.slice().reverse().forEach(row => {
             const dDate = new Date(row[0]), dId = row[1], dLoc = row[2], dDesc = row[3], dStatus = row[4];
             if(!dId) return;
             c.t++;
             if(dStatus === "طلب جديد") c.n++; else if(dStatus === "تحت الإجراء") c.p++; else if(dStatus === "تم العمل عليها") c.d++; else if(dStatus === "محولة لمدير المشروع") c.pj++; else if(dStatus === "مدير الصيانة") c.m++;
+            
             let badgeCls = dStatus === "طلب جديد" ? "bg-new" : dStatus === "تحت الإجراء" ? "bg-process" : dStatus === "تم العمل عليها" ? "bg-done" : dStatus === "محولة لمدير المشروع" ? "bg-pending" : "bg-manager";
-            let delayHtml = (dStatus === "تحت الإجراء" && (new Date() - dDate) / 3600000 >= 24) ? '<br><span class="delay-alert">⚠️ متأخر</span>' : '';
-            let actionCells = role === 'admin' ? `<td class="action-col"><select onchange="updateStatus('${dId}', this.value)" style="font-size:11px;"><option disabled selected>تغيير...</option><option value="طلب جديد">طلب جديد</option><option value="تحت الإجراء">تحت الإجراء</option><option value="تم العمل عليها">تم العمل عليها</option><option value="محولة لمدير المشروع">مدير المشروع</option><option value="مدير الصيانة">مدير الصيانة</option></select></td><td class="action-col"><button onclick="deleteReq('${dId}')" class="btn-delete">حذف</button></td>` : (role === 'viewer' ? '' : `<td class="action-col">🔒</td><td class="action-col">🔒</td>`);
+            let delayHtml = (dStatus === "تحت الإجراء" && (now - dDate) / 3600000 >= 24) ? '<br><span class="delay-alert">⚠️ متأخر</span>' : '';
+            
+            let actionCells = role === 'admin' ? `
+                <td class="action-col"><select onchange="updateStatus('${dId}', this.value)" style="font-size:11px;"><option disabled selected>تغيير...</option><option value="طلب جديد">طلب جديد</option><option value="تحت الإجراء">تحت الإجراء</option><option value="تم العمل عليها">تم العمل عليها</option><option value="محولة لمدير المشروع">مدير المشروع</option><option value="مدير الصيانة">مدير الصيانة</option></select></td>
+                <td class="action-col"><button onclick="deleteReq('${dId}')" class="btn-delete">حذف</button></td>` : (role === 'viewer' ? '' : `<td class="action-col">🔒</td><td class="action-col">🔒</td>`);
+
             tbody.innerHTML += `<tr><td><strong>#${dId}</strong></td><td>${dLoc}</td><td>${dDate.toLocaleDateString('ar-EG')}</td><td>${dDesc}</td><td><span class="badge ${badgeCls}">${dStatus}</span>${delayHtml}</td>${actionCells}</tr>`;
         });
         document.getElementById('totalCount').innerText = c.t; document.getElementById('newCount').innerText = c.n; document.getElementById('processCount').innerText = c.p; document.getElementById('doneCount').innerText = c.d; document.getElementById('pendingCount').innerText = c.pj; document.getElementById('managerCount').innerText = c.m;
@@ -183,7 +176,10 @@
 
     function searchTable() { const v = document.getElementById("searchInp").value.toLowerCase(); const f = allData.filter(r => r.join(" ").toLowerCase().includes(v)); renderUI(f); }
 
-    function exportExcel() { const ws = XLSX.utils.json_to_sheet(allData.map(r => ({ "التاريخ": r[0], "رقم الطلب": r[1], "الموقع": r[2], "الوصف": r[3], "الحالة": r[4] }))); const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, "Report"); XLSX.utils.writeFile(wb, "Maintenance_Ahsa_V2.xlsx"); }
+    function exportExcel() {
+        const ws = XLSX.utils.json_to_sheet(allData.map(r => ({ "التاريخ": r[0], "رقم الطلب": r[1], "الموقع": r[2], "الوصف": r[3], "الحالة": r[4] })));
+        const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, "Report"); XLSX.utils.writeFile(wb, "Report_Maintenance.xlsx");
+    }
 
     function logout() { sessionStorage.clear(); location.reload(); }
     window.onload = () => { if(sessionStorage.getItem('isLogged')) startApp(); };
