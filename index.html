@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>نظام الصيانة المطور</title>
+    <title>نظام الصيانة المطور - إدارة المواقع</title>
     <script src="https://cdnjs.cloudflare.com"></script>
     <style>
         :root { --primary: #0288D1; --sky: #E3F2FD; --dark-blue: #1565C0; --success: #10B981; --warning: #F59E0B; --danger: #EF4444; --gray: #94A3B8; }
@@ -76,10 +76,11 @@
         <div class="box">
             <h4 style="margin:0 0 15px 0; color:var(--dark-blue);">➕ إضافة أمر عمل جديد</h4>
             <form id="addForm" class="flex-box">
-                <input type="number" id="reqId" placeholder="رقم الأمر" required style="width:120px;">
-                <input type="text" id="reqLoc" placeholder="المكان" required>
-                <input type="text" id="reqDesc" placeholder="الوصف" required style="flex:1">
-                <select id="reqStatus">
+                <input type="number" id="reqId" placeholder="رقم الأمر" required style="width:100px;">
+                <input type="text" id="reqLoc" placeholder="الموقع" required style="width:150px;">
+                <!-- حقل الوصف مصغر للنصف flex:0.5 -->
+                <input type="text" id="reqDesc" placeholder="الوصف" required style="flex: 0.5; min-width: 200px;">
+                <select id="reqStatus" style="width:150px;">
                     <option value="طلب جديد">طلب جديد</option>
                     <option value="تحت الإجراء">تحت الإجراء</option>
                     <option value="منجز">منجز</option>
@@ -98,7 +99,7 @@
         <div class="box" style="padding:0; overflow:hidden;">
             <table id="mainTable">
                 <thead>
-                    <tr><th>رقم الأمر</th><th>المكان</th><th>التاريخ</th><th>الوصف</th><th>الحالة</th><th>تحديث الحالة</th><th>حذف</th></tr>
+                    <tr><th>رقم الأمر</th><th>المكان</th><th>التاريخ</th><th>الوصف</th><th>الحالة</th><th>تحديث</th><th>حذف</th></tr>
                 </thead>
                 <tbody id="tableBody"></tbody>
             </table>
@@ -118,7 +119,7 @@
             document.getElementById('dashboard').style.display = 'block';
             document.getElementById('uName').innerText = _0xUsers[u].n;
             fetchData();
-        } else { alert("خطأ!"); }
+        } else { alert("بيانات الدخول خاطئة!"); }
     }
 
     function switchSite(val) { currentSite = val; document.getElementById('siteTitle').innerText = `إدارة موقع (${val})`; renderData(); }
@@ -136,12 +137,16 @@
         let s = { n:0, pr:0, d:0, p:0, m:0 };
         filtered.forEach(r => {
             if(r.status==='طلب جديد') s.n++; else if(r.status==='تحت الإجراء') s.pr++; else if(r.status==='منجز') s.d++; else if(r.status==='مدير المشروع') s.p++; else if(r.status==='مدير الصيانة') s.m++;
+            
+            // ضمان عرض التاريخ فقط بدون وقت
+            let dOnly = r.date ? r.date.split(',')[0].split('T')[0] : '';
+
             tbody.innerHTML += `<tr>
-                <td>${r.id}</td><td>${r.location}</td><td>${r.date}</td><td>${r.desc}</td>
+                <td>${r.id}</td><td>${r.location}</td><td>${dOnly}</td><td>${r.desc}</td>
                 <td><span class="badge ${getBadgeClass(r.status)}">${r.status}</span></td>
                 <td>
                     <select onchange="updateStatus('${r.id}', this.value)" class="update-select">
-                        <option value="">تحديث الحالة...</option>
+                        <option value="">تحديث...</option>
                         <option value="طلب جديد">طلب جديد</option>
                         <option value="تحت الإجراء">تحت الإجراء</option>
                         <option value="منجز">منجز</option>
@@ -177,7 +182,15 @@
 
     document.getElementById('addForm').onsubmit = async function(e) {
         e.preventDefault();
-        const d = { id:document.getElementById('reqId').value, location:document.getElementById('reqLoc').value, desc:document.getElementById('reqDesc').value, status:document.getElementById('reqStatus').value, site:currentSite, date:new Date().toLocaleDateString('en-GB') };
+        let simpleDate = new Date().toLocaleDateString('en-GB'); // dd/mm/yyyy فقط
+        const d = { 
+            id:document.getElementById('reqId').value, 
+            location:document.getElementById('reqLoc').value, 
+            desc:document.getElementById('reqDesc').value, 
+            status:document.getElementById('reqStatus').value, 
+            site:currentSite, 
+            date:simpleDate 
+        };
         document.getElementById('sync-loader').style.display = 'block';
         await fetch(_0xUrl, { method: 'POST', mode: 'no-cors', body: JSON.stringify(d) });
         allRecords.push(d); renderData(); this.reset();
