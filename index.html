@@ -9,7 +9,7 @@
         :root { --primary: #0288D1; --sky: #E3F2FD; --dark-blue: #1565C0; --success: #10B981; --warning: #F59E0B; --danger: #EF4444; --gray: #94A3B8; }
         body { font-family: 'Segoe UI', Tahoma, sans-serif; background: #F4F7F9; margin: 0; padding: 0; user-select: none; }
         #loginSection { display: flex; align-items: center; justify-content: center; height: 100vh; background: linear-gradient(135deg, var(--sky), #fff); }
-        .login-card { background: white; padding: 40px; border-radius: 25px; box-shadow: 0 20px 50px rgba(2,136,209,0.1); width: 380px; text-align: center; border: 1px solid var(--sky); }
+        .login-card { background: white; padding: 40px; border-radius: 25px; box-shadow: 0 20px 50px rgba(2, 136, 209, 0.1); width: 380px; text-align: center; border: 1px solid var(--sky); }
         .login-card input { width: 100%; padding: 14px; margin-bottom: 15px; border: 2px solid #F1F5F9; border-radius: 12px; box-sizing: border-box; outline: none; }
         .login-card button { width: 100%; padding: 14px; background: var(--primary); color: white; border: none; border-radius: 12px; cursor: pointer; font-weight: bold; }
         #dashboard { display: none; padding: 25px; position: relative; }
@@ -55,7 +55,7 @@
                     <option value="C">🏬 موقع (SF)</option>
                     <option value="D">🏥 موقع (TF)</option>
                 </select>
-                <h3 id="siteTitle" style="margin:0; color:var(--primary);">إدارة موقع (أ)</h3>
+                <h3 id="siteTitle" style="margin:0; color:var(--primary);">إدارة موقع (A)</h3>
             </div>
             <div id="userInfo" style="text-align: left;">
                 <span id="uName" style="font-weight:bold; color:var(--primary);"></span> | 
@@ -98,7 +98,7 @@
         <div class="box" style="padding:0; overflow:hidden;">
             <table id="mainTable">
                 <thead>
-                    <tr><th>رقم الأمر</th><th>المكان</th><th>التاريخ</th><th>الوصف</th><th>الحالة</th><th class="action-col">تحديث</th><th class="action-col">إجراء</th></tr>
+                    <tr><th>رقم الأمر</th><th>المكان</th><th>التاريخ</th><th>الوصف</th><th>الحالة</th><th class="col-update">تحديث</th><th class="col-delete">إجراء</th></tr>
                 </thead>
                 <tbody id="tableBody"></tbody>
             </table>
@@ -110,8 +110,8 @@
     const _0xUrl = 'https://script.google.com/macros/s/AKfycbyoK5dhDG-33sr8nT-MRFYob3IPoKdh7_2uUbs_6Rt0LD1Eyj2x-rvKMueR0hmp4NUD/exec'; 
     const _0xUsers = { 
         "admin": { p: "ahsa2024", r: "admin", n: "م. حسين" }, 
-        "user1": { p: "11332030@", r: "user", n: "الفني" }, 
-        "viewer1": { p: "2030", r: "viewer", n: "المراقب العام" } 
+        "user1": { p: "11332030@", r: "user", n: "الفني" },
+        "viewer1": { p: "2030", r: "viewer", n: "المراقب العام" }
     };
 
     let currentSite = 'A', allRecords = [], currentUser = null;
@@ -125,12 +125,16 @@
             document.getElementById('dashboard').style.display = 'block';
             document.getElementById('uName').innerText = currentUser.n;
 
+            // تطبيق الصلاحيات على الواجهة
+            const style = document.createElement('style');
             if(currentUser.r === "viewer") {
                 document.getElementById('addBox').style.display = 'none';
-                const style = document.createElement('style');
-                style.innerHTML = `.action-col, td:nth-child(6), td:nth-child(7) { display: none !important; }`;
-                document.head.appendChild(style);
+                style.innerHTML = `.col-update, .col-delete, td:nth-child(6), td:nth-child(7) { display: none !important; }`;
+            } else if(currentUser.r === "user") {
+                style.innerHTML = `.col-delete, td:nth-child(7) { display: none !important; }`;
             }
+            document.head.appendChild(style);
+
             fetchData();
         } else { alert("بيانات الدخول خاطئة!"); }
     }
@@ -138,7 +142,6 @@
     function switchSite(val) {
         currentSite = val;
         document.getElementById('siteTitle').innerText = `إدارة موقع (${val})`;
-        document.getElementById('searchInp').value = '';
         renderData();
     }
 
@@ -161,10 +164,10 @@
         filtered.forEach(r => {
             if(r.status==='طلب جديد') s.n++; else if(r.status==='تحت الإجراء') s.pr++; else if(r.status==='منجز') s.d++; else if(r.status==='مدير المشروع') s.p++; else if(r.status==='مدير الصيانة') s.m++;
             
-            tbody.innerHTML += `<tr>
+            let row = `<tr>
                 <td>${r.id}</td><td>${r.location}</td><td>${r.date || ''}</td><td>${r.desc}</td>
                 <td><span class="badge ${getBadgeClass(r.status)}">${r.status}</span></td>
-                <td class="action-col">
+                <td class="col-update">
                     <select onchange="updateStatus('${r.id}', this.value)" class="update-select">
                         <option value="">تحديث...</option>
                         <option value="طلب جديد">طلب جديد</option>
@@ -174,8 +177,9 @@
                         <option value="مدير الصيانة">مدير الصيانة</option>
                     </select>
                 </td>
-                <td class="action-col"><button onclick="deleteRow('${r.id}')" style="color:red; background:none; border:none; cursor:pointer;">🗑️</button></td>
+                <td class="col-delete"><button onclick="deleteRow('${r.id}')" style="color:red; background:none; border:none; cursor:pointer;">🗑️</button></td>
             </tr>`;
+            tbody.innerHTML += row;
         });
 
         document.getElementById('totalCount').innerText = filtered.length;
@@ -198,7 +202,8 @@
     }
 
     async function deleteRow(id) {
-        if (currentUser.r === 'viewer' || !confirm("حذف نهائي؟")) return;
+        if (currentUser.r !== 'admin') { alert("⚠️ عذراً، لا تملك صلاحية الحذف."); return; }
+        if (!confirm("هل أنت متأكد من حذف هذا السجل نهائياً؟")) return;
         document.getElementById('sync-loader').style.display = 'block';
         const index = allRecords.findIndex(r => r.id == id);
         if (index > -1) {
