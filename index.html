@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>نظام الصيانة  - م. حسين العلي</title>
+    <title>نظام الصيانة - م. حسين العلي</title>
+    <!-- مكتبة تصدير الإكسل - تأكد من وجود هذا السطر -->
     <script src="https://cdnjs.cloudflare.com"></script>
     <style>
         :root { --primary: #0288D1; --sky: #E3F2FD; --dark-blue: #1565C0; --success: #10B981; --warning: #F59E0B; --danger: #EF4444; --gray: #94A3B8; }
@@ -55,7 +56,7 @@
                     <option value="C">🏬 موقع (SF)</option>
                     <option value="D">🏥 موقع (TF)</option>
                 </select>
-                <h3 id="siteTitle" style="margin:0; color:var(--primary);">إدارة موقع (A)</h3>
+                <h3 id="siteTitle" style="margin:0; color:var(--primary);">إدارة موقع (GF)</h3>
             </div>
             <div id="userInfo" style="text-align: left;">
                 <span id="uName" style="font-weight:bold; color:var(--primary);"></span> | 
@@ -67,7 +68,7 @@
             <div class="stat-card border-total"><h3>الإجمالي</h3><p id="totalCount">0</p></div>
             <div class="stat-card border-new"><h3>طلب جديد</h3><p id="newCount">0</p></div>
             <div class="stat-card border-process"><h3>تحت الإجراء</h3><p id="processCount">0</p></div>
-            <div class="stat-card border-done"><h3>مغلق</h3><p id="doneCount">0</p></div>
+            <div class="stat-card border-done"><h3>منجز</h3><p id="doneCount">0</p></div>
             <div class="stat-card border-pending"><h3>م. المشروع</h3><p id="pendingCount">0</p></div>
             <div class="stat-card border-manager"><h3>م. الصيانة</h3><p id="managerCount">0</p></div>
             <div class="stat-card" style="background:var(--dark-blue); color:white;"><h3>الإنجاز</h3><p id="kpiValue" style="color:white">0%</p></div>
@@ -107,7 +108,9 @@
 </div>
 
 <script>
-    const _0xUrl = 'https://script.google.com/macros/s/AKfycbyoK5dhDG-33sr8nT-MRFYob3IPoKdh7_2uUbs_6Rt0LD1Eyj2x-rvKMueR0hmp4NUD/exec'; 
+    // تأكد من وضع الرابط الخاص بك هنا
+    const _0xUrl = 'https://script.google.com'; 
+    
     const _0xUsers = { 
         "admin": { p: "ahsa2024", r: "admin", n: "م. حسين" }, 
         "user1": { p: "11332030@", r: "user", n: "الفني" },
@@ -125,24 +128,22 @@
             document.getElementById('dashboard').style.display = 'block';
             document.getElementById('uName').innerText = currentUser.n;
 
-            // تطبيق الصلاحيات على الواجهة
             const style = document.createElement('style');
-if(currentUser.r === "viewer") {
-    // المراقب: مشاهدة فقط (إخفاء الإضافة، التحديث، الحذف)
-    document.getElementById('addBox').style.display = 'none';
-    style.innerHTML = `.col-update, .col-delete, td:nth-child(6), td:nth-child(7) { display: none !important; }`;
-} else if(currentUser.r === "user") {
-    // اليوزر: إضافة فقط (إخفاء التحديث والحذف)
-    style.innerHTML = `.col-update, .col-delete, td:nth-child(6), td:nth-child(7) { display: none !important; }`;
-}
-document.head.appendChild(style);
+            if(currentUser.r === "viewer") {
+                document.getElementById('addBox').style.display = 'none';
+                style.innerHTML = `.col-update, .col-delete, td:nth-child(6), td:nth-child(7) { display: none !important; }`;
+            } else if(currentUser.r === "user") {
+                style.innerHTML = `.col-update, .col-delete, td:nth-child(6), td:nth-child(7) { display: none !important; }`;
+            }
+            document.head.appendChild(style);
             fetchData();
         } else { alert("بيانات الدخول خاطئة!"); }
     }
 
     function switchSite(val) {
         currentSite = val;
-        document.getElementById('siteTitle').innerText = `إدارة موقع (${val})`;
+        let siteLabels = { 'A': 'GF', 'B': 'FF', 'C': 'SF', 'D': 'TF' };
+        document.getElementById('siteTitle').innerText = `إدارة موقع (${siteLabels[val]})`;
         renderData();
     }
 
@@ -157,57 +158,42 @@ document.head.appendChild(style);
     }
 
     function renderData() {
-    const filtered = allRecords.filter(r => String(r.site).trim().toUpperCase() === String(currentSite).toUpperCase());
-    const tbody = document.getElementById('tableBody');
-    tbody.innerHTML = '';
-    let s = { n:0, pr:0, d:0, p:0, m:0 };
+        const filtered = allRecords.filter(r => String(r.site).trim().toUpperCase() === String(currentSite).toUpperCase());
+        const tbody = document.getElementById('tableBody');
+        tbody.innerHTML = '';
+        let s = { n:0, pr:0, d:0, p:0, m:0 };
 
-    filtered.forEach(r => {
-        if(r.status==='طلب جديد') s.n++; else if(r.status==='تحت الإجراء') s.pr++; else if(r.status==='منجز') s.d++; else if(r.status==='مدير المشروع') s.p++; else if(r.status==='مدير الصيانة') s.m++;
-        
-        // --- الجزء المطور لتنظيف التاريخ ---
-        let rawDate = r.date ? String(r.date) : '';
-        let cleanDate = '';
-        
-        if (rawDate.includes('T')) {
-            // إذا كان التاريخ بصيغة ISO (مثل 2024-05-10T10:00:00)
-            cleanDate = rawDate.split('T')[0];
-        } else if (rawDate.includes(' ')) {
-            // إذا كان التاريخ يحتوي على مسافة وبعدها وقت
-            cleanDate = rawDate.split(' ')[0];
-        } else {
-            cleanDate = rawDate;
-        }
-        // ---------------------------------
+        filtered.forEach(r => {
+            if(r.status==='طلب جديد') s.n++; else if(r.status==='تحت الإجراء') s.pr++; else if(r.status==='منجز') s.d++; else if(r.status==='مدير المشروع') s.p++; else if(r.status==='مدير الصيانة') s.m++;
+            
+            let displayDate = r.date ? String(r.date).split('T')[0].split(' ')[0] : '';
 
-        tbody.innerHTML += `<tr>
-            <td>${r.id}</td><td>${r.location}</td><td>${cleanDate}</td><td>${r.desc}</td>
-            <td><span class="badge ${getBadgeClass(r.status)}">${r.status}</span></td>
-            <td class="col-update">
-                <select onchange="updateStatus('${r.id}', this.value)" class="update-select">
-                    <option value="">تحديث...</option>
-                    <option value="طلب جديد">طلب جديد</option>
-                    <option value="تحت الإجراء">تحت الإجراء</option>
-                    <option value="منجز">منجز</option>
-                    <option value="مدير المشروع">مدير المشروع</option>
-                    <option value="مدير الصيانة">مدير الصيانة</option>
-                </select>
-            </td>
-            <td class="col-delete"><button onclick="deleteRow('${r.id}')" style="color:red; background:none; border:none; cursor:pointer;">🗑️</button></td>
-        </tr>`;
-    });
+            tbody.innerHTML += `<tr>
+                <td>${r.id}</td><td>${r.location}</td><td>${displayDate}</td><td>${r.desc}</td>
+                <td><span class="badge ${getBadgeClass(r.status)}">${r.status}</span></td>
+                <td class="col-update">
+                    <select onchange="updateStatus('${r.id}', this.value)" class="update-select">
+                        <option value="">تحديث...</option>
+                        <option value="طلب جديد">طلب جديد</option>
+                        <option value="تحت الإجراء">تحت الإجراء</option>
+                        <option value="منجز">منجز</option>
+                        <option value="مدير المشروع">مدير المشروع</option>
+                        <option value="مدير الصيانة">مدير الصيانة</option>
+                    </select>
+                </td>
+                <td class="col-delete"><button onclick="deleteRow('${r.id}')" style="color:red; background:none; border:none; cursor:pointer;">🗑️</button></td>
+            </tr>`;
+        });
 
-    document.getElementById('totalCount').innerText = filtered.length;
-    document.getElementById('newCount').innerText = s.n; 
-    document.getElementById('processCount').innerText = s.pr;
-    document.getElementById('doneCount').innerText = s.d; 
-    document.getElementById('pendingCount').innerText = s.p;
-    document.getElementById('managerCount').innerText = s.m;
-    document.getElementById('kpiValue').innerText = (filtered.length > 0 ? Math.round((s.d/filtered.length)*100) : 0) + '%';
-}
+        document.getElementById('totalCount').innerText = filtered.length;
+        document.getElementById('newCount').innerText = s.n; document.getElementById('processCount').innerText = s.pr;
+        document.getElementById('doneCount').innerText = s.d; document.getElementById('pendingCount').innerText = s.p;
+        document.getElementById('managerCount').innerText = s.m;
+        document.getElementById('kpiValue').innerText = (filtered.length > 0 ? Math.round((s.d/filtered.length)*100) : 0) + '%';
+    }
 
     async function updateStatus(id, newStatus) {
-        if(!newStatus || currentUser.r === 'viewer') return;
+        if(!newStatus || currentUser.r !== 'admin') return;
         document.getElementById('sync-loader').style.display = 'block';
         const record = allRecords.find(r => r.id == id);
         if(record) {
@@ -219,8 +205,8 @@ document.head.appendChild(style);
     }
 
     async function deleteRow(id) {
-        if (currentUser.r !== 'admin') { alert("⚠️ عذراً، لا تملك صلاحية الحذف."); return; }
-        if (!confirm("هل أنت متأكد من حذف هذا السجل نهائياً؟")) return;
+        if (currentUser.r !== 'admin') { alert("عذراً، لا تملك صلاحية الحذف."); return; }
+        if (!confirm("هل أنت متأكد من حذف هذا السجل؟")) return;
         document.getElementById('sync-loader').style.display = 'block';
         const index = allRecords.findIndex(r => r.id == id);
         if (index > -1) {
@@ -252,8 +238,10 @@ document.head.appendChild(style);
         for(let r of rows) { r.style.display = r.innerText.toLowerCase().includes(v) ? '' : 'none'; }
     }
 
+    // دالة التصدير المصلحة
     function exportExcel() {
         const filtered = allRecords.filter(r => r.site === currentSite);
+        if(filtered.length === 0) { alert("لا توجد بيانات لتصديرها في هذا الموقع"); return; }
         const ws = XLSX.utils.json_to_sheet(filtered);
         const wb = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, ws, "Maintenance");
