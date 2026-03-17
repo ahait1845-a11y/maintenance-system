@@ -157,38 +157,54 @@ document.head.appendChild(style);
     }
 
     function renderData() {
-        const filtered = allRecords.filter(r => String(r.site).trim().toUpperCase() === String(currentSite).toUpperCase());
-        const tbody = document.getElementById('tableBody');
-        tbody.innerHTML = '';
-        let s = { n:0, pr:0, d:0, p:0, m:0 };
+    const filtered = allRecords.filter(r => String(r.site).trim().toUpperCase() === String(currentSite).toUpperCase());
+    const tbody = document.getElementById('tableBody');
+    tbody.innerHTML = '';
+    let s = { n:0, pr:0, d:0, p:0, m:0 };
 
-        filtered.forEach(r => {
-            if(r.status==='طلب جديد') s.n++; else if(r.status==='تحت الإجراء') s.pr++; else if(r.status==='منجز') s.d++; else if(r.status==='مدير المشروع') s.p++; else if(r.status==='مدير الصيانة') s.m++;
-            
-            let row = `<tr>
-                <td>${r.id}</td><td>${r.location}</td><td>${r.date || ''}</td><td>${r.desc}</td>
-                <td><span class="badge ${getBadgeClass(r.status)}">${r.status}</span></td>
-                <td class="col-update">
-                    <select onchange="updateStatus('${r.id}', this.value)" class="update-select">
-                        <option value="">تحديث...</option>
-                        <option value="طلب جديد">طلب جديد</option>
-                        <option value="تحت الإجراء">تحت الإجراء</option>
-                        <option value="منجز">منجز</option>
-                        <option value="مدير المشروع">مدير المشروع</option>
-                        <option value="مدير الصيانة">مدير الصيانة</option>
-                    </select>
-                </td>
-                <td class="col-delete"><button onclick="deleteRow('${r.id}')" style="color:red; background:none; border:none; cursor:pointer;">🗑️</button></td>
-            </tr>`;
-            tbody.innerHTML += row;
-        });
+    filtered.forEach(r => {
+        if(r.status==='طلب جديد') s.n++; else if(r.status==='تحت الإجراء') s.pr++; else if(r.status==='منجز') s.d++; else if(r.status==='مدير المشروع') s.p++; else if(r.status==='مدير الصيانة') s.m++;
+        
+        // --- الجزء المطور لتنظيف التاريخ ---
+        let rawDate = r.date ? String(r.date) : '';
+        let cleanDate = '';
+        
+        if (rawDate.includes('T')) {
+            // إذا كان التاريخ بصيغة ISO (مثل 2024-05-10T10:00:00)
+            cleanDate = rawDate.split('T')[0];
+        } else if (rawDate.includes(' ')) {
+            // إذا كان التاريخ يحتوي على مسافة وبعدها وقت
+            cleanDate = rawDate.split(' ')[0];
+        } else {
+            cleanDate = rawDate;
+        }
+        // ---------------------------------
 
-        document.getElementById('totalCount').innerText = filtered.length;
-        document.getElementById('newCount').innerText = s.n; document.getElementById('processCount').innerText = s.pr;
-        document.getElementById('doneCount').innerText = s.d; document.getElementById('pendingCount').innerText = s.p;
-        document.getElementById('managerCount').innerText = s.m;
-        document.getElementById('kpiValue').innerText = (filtered.length > 0 ? Math.round((s.d/filtered.length)*100) : 0) + '%';
-    }
+        tbody.innerHTML += `<tr>
+            <td>${r.id}</td><td>${r.location}</td><td>${cleanDate}</td><td>${r.desc}</td>
+            <td><span class="badge ${getBadgeClass(r.status)}">${r.status}</span></td>
+            <td class="col-update">
+                <select onchange="updateStatus('${r.id}', this.value)" class="update-select">
+                    <option value="">تحديث...</option>
+                    <option value="طلب جديد">طلب جديد</option>
+                    <option value="تحت الإجراء">تحت الإجراء</option>
+                    <option value="منجز">منجز</option>
+                    <option value="مدير المشروع">مدير المشروع</option>
+                    <option value="مدير الصيانة">مدير الصيانة</option>
+                </select>
+            </td>
+            <td class="col-delete"><button onclick="deleteRow('${r.id}')" style="color:red; background:none; border:none; cursor:pointer;">🗑️</button></td>
+        </tr>`;
+    });
+
+    document.getElementById('totalCount').innerText = filtered.length;
+    document.getElementById('newCount').innerText = s.n; 
+    document.getElementById('processCount').innerText = s.pr;
+    document.getElementById('doneCount').innerText = s.d; 
+    document.getElementById('pendingCount').innerText = s.p;
+    document.getElementById('managerCount').innerText = s.m;
+    document.getElementById('kpiValue').innerText = (filtered.length > 0 ? Math.round((s.d/filtered.length)*100) : 0) + '%';
+}
 
     async function updateStatus(id, newStatus) {
         if(!newStatus || currentUser.r === 'viewer') return;
