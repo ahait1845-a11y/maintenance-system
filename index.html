@@ -127,14 +127,15 @@
 
             // تطبيق الصلاحيات على الواجهة
             const style = document.createElement('style');
-            if(currentUser.r === "viewer") {
-                document.getElementById('addBox').style.display = 'none';
-                style.innerHTML = `.col-update, .col-delete, td:nth-child(6), td:nth-child(7) { display: none !important; }`;
-            } else if(currentUser.r === "user") {
-                style.innerHTML = `.col-delete, td:nth-child(7) { display: none !important; }`;
-            }
-            document.head.appendChild(style);
-
+if(currentUser.r === "viewer") {
+    // المراقب: مشاهدة فقط (إخفاء الإضافة، التحديث، الحذف)
+    document.getElementById('addBox').style.display = 'none';
+    style.innerHTML = `.col-update, .col-delete, td:nth-child(6), td:nth-child(7) { display: none !important; }`;
+} else if(currentUser.r === "user") {
+    // اليوزر: إضافة فقط (إخفاء التحديث والحذف)
+    style.innerHTML = `.col-update, .col-delete, td:nth-child(6), td:nth-child(7) { display: none !important; }`;
+}
+document.head.appendChild(style);
             fetchData();
         } else { alert("بيانات الدخول خاطئة!"); }
     }
