@@ -105,12 +105,24 @@
             document.getElementById('uName').innerText = currentUser.n;
 
             const style = document.createElement('style');
-            if(currentUser.r === "viewer") {
-                document.getElementById('addBox').style.display = 'none';
-                style.innerHTML = `.col-update, .col-delete, td:nth-child(6), td:nth-child(7) { display: none !important; }`;
-            } else if(currentUser.r === "user") {
-                style.innerHTML = `.col-update, .col-delete, td:nth-child(6), td:nth-child(7) { display: none !important; }`;
+            
+            // --- تعديل صلاحيات زر التصدير والصلاحيات الأخرى ---
+            if(currentUser.r === "admin") {
+                // الآدمن يرى كل شيء بما في ذلك زر التصدير
+                style.innerHTML = ""; 
+            } else {
+                // اليوزر والمراقب: إخفاء زر التصدير (Excel)
+                document.querySelector('button[onclick="exportExcel()"]').style.display = 'none';
+                
+                if(currentUser.r === "viewer") {
+                    document.getElementById('addBox').style.display = 'none';
+                    style.innerHTML = `.col-update, .col-delete, td:nth-child(6), td:nth-child(7) { display: none !important; }`;
+                } else if(currentUser.r === "user") {
+                    style.innerHTML = `.col-update, .col-delete, td:nth-child(6), td:nth-child(7) { display: none !important; }`;
+                }
             }
+            // -----------------------------------------------
+            
             document.head.appendChild(style);
             fetchData();
         } else { alert("بيانات الدخول خاطئة!"); }
