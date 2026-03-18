@@ -3,23 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>نظام الصيانة - م. حسين العلي</title>
+    <title>نظام الصيانة  - م. حسين العلي</title>
     <script src="https://cdnjs.cloudflare.com"></script>
     <style>
-        :root { --primary: #0288D1; --sky: #E3F2FD; --dark-blue: #1565C0; --success: #10B981; --warning: #F59E0B; --danger: #EF4444; --gray: #94A3B8; }
+        :root { --primary: #0288D1; --sky: #E3F2FD; --dark-blue: #1565C0; --success: #10B981; --warning: #F59E0B; --danger: #EF4444; --gray: #94A3B8; --light-sky: #00B0FF; }
         body { font-family: 'Segoe UI', Tahoma, sans-serif; background: #F4F7F9; margin: 0; padding: 0; user-select: none; -webkit-user-select: none; }
+        
+        /* 🎨 تعديل صفحة الدخول */
         #loginSection { display: flex; align-items: center; justify-content: center; height: 100vh; background: linear-gradient(135deg, var(--sky), #fff); }
         .login-card { background: white; padding: 40px; border-radius: 25px; box-shadow: 0 20px 50px rgba(2, 136, 209, 0.1); width: 380px; text-align: center; border: 1px solid var(--sky); }
-        .login-card input { width: 100%; padding: 14px; margin-bottom: 15px; border: 2px solid #F1F5F9; border-radius: 12px; outline: none; }
-        .login-card button { width: 100%; padding: 14px; background: var(--primary); color: white; border: none; border-radius: 12px; cursor: pointer; font-weight: bold; }
+        
+        /* لون العنوان أزرق سماوي */
+        .login-card h2 { color: var(--light-sky); margin-bottom: 5px; font-size: 24px; }
+        /* إضافة توقيع المهندس */
+        .eng-signature { color: var(--gray); font-size: 14px; margin-bottom: 25px; font-weight: 500; display: block; }
+        
+        .login-card input { width: 100%; padding: 14px; margin-bottom: 15px; border: 2px solid #F1F5F9; border-radius: 12px; outline: none; box-sizing: border-box; }
+        .login-card button { width: 100%; padding: 14px; background: var(--primary); color: white; border: none; border-radius: 12px; cursor: pointer; font-weight: bold; transition: 0.3s; }
+        .login-card button:hover { background: var(--dark-blue); }
+
         #dashboard { display: none; padding: 25px; position: relative; }
         .container { max-width: 1400px; margin: auto; }
-        .header { display: space-between; align-items: center; background: white; padding: 15px 25px; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 25px; border-right: 8px solid var(--primary); display: flex; justify-content: space-between; }
+        .header { display: flex; justify-content: space-between; align-items: center; background: white; padding: 15px 25px; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 25px; border-right: 8px solid var(--primary); }
         .site-picker { background: #f8fafc; border: 2px solid var(--sky); padding: 10px 20px; border-radius: 15px; font-weight: bold; color: var(--dark-blue); cursor: pointer; outline: none; }
         .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-bottom: 25px; }
         .stat-card { background: white; padding: 15px; border-radius: 20px; text-align: center; border-top: 5px solid var(--gray); box-shadow: 0 4px 10px rgba(0,0,0,0.03); }
         .stat-card p { font-size: 26px; font-weight: 800; margin: 8px 0 0; color: var(--dark-blue); }
         .border-total { border-top-color: var(--primary); } .border-new { border-top-color: var(--gray); } .border-process { border-top-color: #00B0FF; } .border-done { border-top-color: var(--success); } .border-pending { border-top-color: var(--warning); } .border-manager { border-top-color: var(--dark-blue); }
+        
         .box { background: white; padding: 20px; border-radius: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); margin-bottom: 20px; }
         .flex-box { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
         table { width: 100%; border-collapse: collapse; }
@@ -34,11 +45,12 @@
 </head>
 <body oncontextmenu="return false;">
 
-<div id="sync-loader">⏳ جاري تحديث البيانات...</div>
+<div id="sync-loader">⏳ جاري مزامنة البيانات...</div>
 
 <div id="loginSection">
     <div class="login-card">
         <h2>نظام تتبع الصيانة</h2>
+        <span class="eng-signature">Eng.hussainalali</span>
         <input type="text" id="uInp" placeholder="اسم المستخدم">
         <input type="password" id="pInp" placeholder="كلمة المرور">
         <button onclick="hL()">دخول النظام</button>
@@ -54,16 +66,16 @@
                 <option value="C">🏬 موقع (SF)</option>
                 <option value="D">🏥 موقع (TF)</option>
             </select>
-            <div id="uInf"><span id="uN" style="font-weight:bold;"></span> | <button onclick="logout()">خروج</button></div>
+            <div id="uInf"><span id="uN" style="font-weight:bold; color:var(--primary);"></span> | <button onclick="logout()" style="background:none; border:none; color:var(--danger); cursor:pointer; font-weight:bold;">خروج</button></div>
         </div>
 
         <div class="stats-grid">
-            <div class="stat-card border-total"><h3>الإجمالي</h3><p id="totalCount">0</p></div>
-            <div class="stat-card border-new"><h3>جديد</h3><p id="newCount">0</p></div>
-            <div class="stat-card border-process"><h3>إجراء</h3><p id="processCount">0</p></div>
+            <div class="stat-card border-total"><h3>المجموع</h3><p id="totalCount">0</p></div>
+            <div class="stat-card border-new"><h3>طلب جديد</h3><p id="newCount">0</p></div>
+            <div class="stat-card border-process"><h3>تحت الإجراء</h3><p id="processCount">0</p></div>
             <div class="stat-card border-done"><h3>مغلق</h3><p id="doneCount">0</p></div>
-            <div class="stat-card border-pending"><h3>مدير الشروع</h3><p id="pendingCount">0</p></div>
-            <div class="stat-card border-manager"><h3>مدير الصيانة</h3><p id="managerCount">0</p></div>
+            <div class="stat-card border-pending"><h3>مدير المشروع</h3><p id="pendingCount">0</p></div>
+            <div class="stat-card border-manager"><h3>مدير المشروع</h3><p id="managerCount">0</p></div>
             <div class="stat-card" style="background:var(--dark-blue); color:white; border-top:none;"><h3>الإنجاز</h3><p id="kpiValue" style="color:white">0%</p></div>
         </div>
 
@@ -71,11 +83,11 @@
             <form id="addForm" class="flex-box">
                 <input type="number" id="reqId" placeholder="رقم الأمر" required style="width:80px;">
                 <input type="text" id="reqLoc" placeholder="الموقع" required style="width:120px;">
-                <input type="text" id="reqDesc" placeholder="الوصف" required style="flex: 0.5;">
+                <input type="text" id="reqDesc" placeholder="الوصف" required style="flex: 0.5; min-width:200px;">
                 <select id="reqStatus">
                     <option value="طلب جديد">طلب جديد</option>
                     <option value="تحت الإجراء">تحت الإجراء</option>
-                    <option value="منجز">مغلق</option>
+                    <option value="منجز">منجز</option>
                     <option value="مدير المشروع">مدير المشروع</option>
                     <option value="مدير الصيانة">مدير الصيانة</option>
                 </select>
@@ -84,7 +96,7 @@
         </div>
 
         <div class="box flex-box">
-            <input type="text" id="searchInp" onkeyup="srT()" placeholder="🔍 ابحث في نتائج هذا الموقع..." style="flex:1; padding:8px;">
+            <input type="text" id="searchInp" onkeyup="srT()" placeholder="🔍 ابحث في هذا الموقع..." style="flex:1; padding:10px; border-radius:10px; border:1px solid #ddd;">
             <button id="btn-export" onclick="eX()" style="background:#34495E; color:white; padding:8px 15px; border-radius:8px;">Excel 📊</button>
         </div>
 
@@ -99,17 +111,19 @@
 
 <script>
     const _0xU = 'https://script.google.com/macros/s/AKfycbyoK5dhDG-33sr8nT-MRFYob3IPoKdh7_2uUbs_6Rt0LD1Eyj2x-rvKMueR0hmp4NUD/exec'; 
-    const _0xUs = { "admin": {p:"ahsa2024", r:"admin", n:"م. حسين"}, "user1": {p:"11332030@", r:"user", n:"الفني"}, "viewer1": {p:"2030", r:"viewer", n:"المراقب"} };
-    let _0xCS = 'A', _0xRD = [], _0xCU = null, idleTimer;
+    const _0xUs = { 
+        "admin": {p:"ahsa2024", r:"admin", n:"م. حسين"}, 
+        "user1": {p:"11332030@", r:"user", n:"الفني"}, 
+        "viewer1": {p:"2030", r:"viewer", n:"المراقب"} 
+    };
 
-    // --- نظام البقاء متصلاً ومؤقت الخمول (10 دقائق) ---
+    let _0xCS = 'A', _0xRD = [], _0xCU = null, idleTimer;
     const IDLE_TIME_LIMIT = 10 * 60 * 1000;
 
     function resetIdleTimer() {
         clearTimeout(idleTimer);
         if (_0xCU) idleTimer = setTimeout(logout, IDLE_TIME_LIMIT);
     }
-
     window.onload = checkAutoLogin;
     ['mousemove', 'mousedown', 'touchstart', 'click', 'keypress'].forEach(evt => window.addEventListener(evt, resetIdleTimer));
 
@@ -121,19 +135,15 @@
             else logout();
         }
     }
-
-    function logout() {
-        localStorage.removeItem('loggedUser');
-        location.reload();
-    }
-
+    function logout() { localStorage.removeItem('loggedUser'); location.reload(); }
+    
     function hL() {
         const u = document.getElementById('uInp').value;
         const p = document.getElementById('pInp').value;
         if(_0xUs[u] && _0xUs[u].p === p) {
             localStorage.setItem('loggedUser', JSON.stringify({uId: u}));
             applyLoginStyles(_0xUs[u]);
-        } else { alert("❌ خطأ في الدخول"); }
+        } else { alert("❌ بيانات الدخول غير صحيحة"); }
     }
 
     function applyLoginStyles(user) {
@@ -146,15 +156,11 @@
             document.getElementById('btn-export').style.display = 'block';
             document.getElementById('thUpd').classList.remove('col-hide');
             document.getElementById('thDel').classList.remove('col-hide');
-        } else if(_0xCU.r === "viewer") {
-            document.getElementById('addBox').style.display = 'none';
-        }
+        } else if(_0xCU.r === "viewer") { document.getElementById('addBox').style.display = 'none'; }
         document.head.appendChild(style);
-        resetIdleTimer();
-        fD();
+        resetIdleTimer(); fD();
     }
 
-    // --- العمليات الأساسية ---
     async function fD() {
         document.getElementById('sync-loader').style.display = 'block';
         try {
@@ -177,11 +183,12 @@
         let s = { n:0, pr:0, d:0, p:0, m:0 };
         f.forEach(r => {
             if(r.status==='طلب جديد') s.n++; else if(r.status==='تحت الإجراء') s.pr++; else if(r.status==='منجز') s.d++; else if(r.status==='مدير المشروع') s.p++; else if(r.status==='مدير الصيانة') s.m++;
-            let row = `<tr><td>${r.id}</td><td>${r.location}</td><td>${r.date ? String(r.date).split('T') : ''}</td><td>${r.desc}</td>
+            let dO = r.date ? String(r.date).substring(0, 10) : '';
+            let row = `<tr><td>${r.id}</td><td>${r.location}</td><td>${dO}</td><td>${r.desc}</td>
                 <td><span class="badge ${gBC(r.status)}">${r.status}</span></td>`;
             if(_0xCU.r === 'admin') {
                 row += `<td><select onchange="uS('${r.id}', this.value)"><option value="">تحديث...</option>
-                        <option value="تحت الإجراء">تحت الإجراء</option><option value="منجز">منجز</option>
+                        <option value="طلب جديد">طلب جديد</option><option value="تحت الإجراء">تحت الإجراء</option><option value="منجز">منجز</option>
                         <option value="مدير المشروع">مدير المشروع</option><option value="مدير الصيانة">مدير الصيانة</option></select></td>
                         <td><button onclick="dL('${r.id}')" style="color:red; background:none; border:none; cursor:pointer;">🗑️</button></td>`;
             } else { row += `<td class="col-hide"></td><td class="col-hide"></td>`; }
@@ -195,7 +202,6 @@
     }
 
     function sS(v) { _0xCS = v; rD(); srT(); }
-
     async function uS(id, st) {
         if(!st) return;
         document.getElementById('sync-loader').style.display = 'block';
@@ -204,33 +210,29 @@
         rD(); srT();
         document.getElementById('sync-loader').style.display = 'none';
     }
-
     async function dL(id) {
-        if (!confirm("⚠️ هل أنت متأكد من الحذف؟")) return;
+        if (!confirm("⚠️ هل أنت متأكد؟")) return;
         document.getElementById('sync-loader').style.display = 'block';
         await fetch(_0xU, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ id:id, action:'delete' }) });
         _0xRD = _0xRD.filter(r => String(r.id) !== String(id));
         rD(); srT();
         document.getElementById('sync-loader').style.display = 'none';
     }
-
     document.getElementById('addForm').onsubmit = async function(e) {
         e.preventDefault();
         const id = document.getElementById('reqId').value;
         if (_0xRD.some(r => String(r.id) === String(id))) { alert("⚠️ الرقم مكرر!"); return; }
-        let d = { id:id, location:document.getElementById('reqLoc').value, desc:document.getElementById('reqDesc').value, status:document.getElementById('reqStatus').value, site:_0xCS, date:new Date().toLocaleDateString('en-GB') };
+        let d = { id:id, location:document.getElementById('reqLoc').value, desc:document.getElementById('reqDesc').value, status:document.getElementById('reqStatus').value, site:_0xCS, date:new Date().toISOString().substring(0, 10) };
         document.getElementById('sync-loader').style.display = 'block';
         await fetch(_0xU, { method: 'POST', mode: 'no-cors', body: JSON.stringify(d) });
         _0xRD.push(d); rD(); srT(); this.reset();
         document.getElementById('sync-loader').style.display = 'none';
     };
-
     function srT() {
         let v = document.getElementById('searchInp').value.toLowerCase();
         let rows = document.getElementById('tB').getElementsByTagName('tr');
         for(let r of rows) { r.style.display = r.innerText.toLowerCase().includes(v) ? '' : 'none'; }
     }
-
     function eX() {
         const f = _0xRD.filter(r => String(r.site || '').trim().toUpperCase() === _0xCS);
         const ws = XLSX.utils.json_to_sheet(f);
