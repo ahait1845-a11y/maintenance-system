@@ -142,11 +142,13 @@
     }
 
     function fetchData() {
-        fetch(_0xU).then(res => res.json()).then(data => {
-            const site = document.getElementById('sSel').value;
-            renderTable(data.filter(item => item.site === site));
-        });
-    }
+    fetch(_0xU).then(res => res.json()).then(data => {
+        const site = document.getElementById('sSel').value;
+        // فلترة الموقع ثم عكس الترتيب ليظهر الأحدث أولاً
+        const filtered = data.filter(item => item.site === site).reverse(); 
+        renderTable(filtered);
+    });
+}
 
     function addNewRequest() {
         const idInput = document.getElementById('reqId').value;
