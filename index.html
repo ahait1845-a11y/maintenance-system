@@ -36,8 +36,9 @@
         .bg-new { background: #F1F5F9; color: #64748B; } .bg-process { background: #E0F2FE; color: #0369A1; } .bg-done { background: #DCFCE7; color: #15803D; } .bg-pending { background: #FEF3C7; color: #92400E; } .bg-manager { background: #E8EAF6; color: #3F51B5; }
         
         #sync-loader { position: fixed; bottom: 20px; left: 20px; background: var(--dark-blue); color: white; padding: 10px 25px; border-radius: 30px; display: none; z-index: 999; }
-        input, select { padding: 10px; border-radius: 10px; border: 1px solid #ddd; outline: none; }
+        input, select { padding: 8px; border-radius: 8px; border: 1px solid #ddd; outline: none; font-family: inherit; }
         .btn-del { background: var(--danger); color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; font-size: 11px; font-weight: bold; }
+        .status-select { font-size: 12px; cursor: pointer; background: #fff; border: 1px solid var(--primary); color: var(--dark-blue); font-weight: bold; }
     </style>
 </head>
 <body>
@@ -76,7 +77,7 @@
             <div class="stat-card" style="background:var(--dark-blue); color:white; border-top:none; cursor:default; opacity:1;"><h3>الإنجاز</h3><p id="kpiValue" style="color:white">0%</p></div>
         </div>
 
-        <div id="addBox" class="box">
+        <div id="addBox" class="box" style="display:none;">
             <form id="addForm" class="flex-box" onsubmit="event.preventDefault(); addNewRequest();">
                 <input type="number" id="reqId" placeholder="رقم الأمر" required style="width:100px;">
                 <input type="text" id="reqLoc" placeholder="المكان" required style="width:150px;">
@@ -85,8 +86,6 @@
                     <option value="طلب جديد">طلب جديد</option>
                     <option value="تحت الإجراء">تحت الإجراء</option>
                     <option value="منجز">منجز</option>
-                    <option value="مدير المشروع">مدير المشروع</option>
-                    <option value="مدير الصيانة">مدير الصيانة</option>
                 </select>
                 <button type="submit" style="background:var(--success); color:white; border:none; padding:10px 20px; border-radius:10px; cursor:pointer; font-weight:bold;">+ إضافة طلب</button>
             </form>
@@ -98,7 +97,7 @@
 
         <div class="box" style="padding:0; overflow:hidden;">
             <table>
-                <thead><tr><th>رقم</th><th>المكان</th><th>الوصف</th><th>الحالة</th><th>إجراء</th></tr></thead>
+                <thead><tr><th>رقم</th><th>المكان</th><th>الوصف</th><th>الحالة</th><th id="actionHeader">إجراء</th></tr></thead>
                 <tbody id="tB"></tbody>
             </table>
         </div>
@@ -107,10 +106,8 @@
 
 <script>
     const _0xU = 'https://script.google.com/macros/s/AKfycbxBPlPYh-Hc5NDE-91CYALTuhBu_B08JwaBZelM3HEoGlw1VXiVBUGAcJdyNvFSKP0i/exec';
-    
-    // روابط التنبيهات الصوتية
     const sndAdd = new Audio('https://assets.mixkit.co');
-    const sndDel = new Audio('https://assets.mixkit.co');
+    const sndUpd = new Audio('https://assets.mixkit.co');
 
     const _0xUs = { 
         "admin": {p:"ahsa2024", r:"admin", n:"م. حسين"}, 
@@ -118,27 +115,33 @@
         "viewer1": {p:"2030", r:"viewer", n:"المراقب"} 
     };
 
+    let currentUserRole = "";
+
     function hL() {
         const u = document.getElementById('uInp').value;
         const p = document.getElementById('pInp').value;
         if (_0xUs[u] && _0xUs[u].p === p) {
+            currentUserRole = _0xUs[u].r;
             document.getElementById('loginSection').style.display = 'none';
             document.getElementById('dashboard').style.display = 'block';
             document.getElementById('uN').innerText = _0xUs[u].n;
+            checkPermissions();
             fetchData();
         } else { alert("خطأ في البيانات"); }
     }
 
+    function checkPermissions() {
+        document.getElementById('addBox').style.display = (currentUserRole === 'viewer') ? 'none' : 'block';
+        document.getElementById('actionHeader').style.display = (currentUserRole === 'admin') ? '' : 'none';
+    }
+
     function fetchData() {
         document.getElementById('sync-loader').style.display = 'block';
-        fetch(_0xU)
-            .then(res => res.json())
-            .then(data => {
-                const site = document.getElementById('sSel').value;
-                const filtered = data.filter(item => item.site === site);
-                renderTable(filtered);
-                document.getElementById('sync-loader').style.display = 'none';
-            });
+        fetch(_0xU).then(res => res.json()).then(data => {
+            const site = document.getElementById('sSel').value;
+            renderTable(data.filter(item => item.site === site));
+            document.getElementById('sync-loader').style.display = 'none';
+        });
     }
 
     function addNewRequest() {
@@ -152,38 +155,51 @@
             site: document.getElementById('sSel').value,
             action: 'add'
         };
+        fetch(_0xU, { method: 'POST', body: JSON.stringify(payload) }).then(() => {
+            sndAdd.play(); document.getElementById('addForm').reset(); fetchData();
+        });
+    }
 
-        fetch(_0xU, { method: 'POST', body: JSON.stringify(payload) })
-        .then(() => {
-            sndAdd.play(); // تشغيل صوت الإضافة
-            document.getElementById('addForm').reset();
-            fetchData();
+    function updateStatus(id, newStatus) {
+        document.getElementById('sync-loader').style.display = 'block';
+        fetch(_0xU, { method: 'POST', body: JSON.stringify({ id: id, status: newStatus, action: 'update' }) }).then(() => {
+            sndUpd.play(); fetchData();
         });
     }
 
     function deleteRequest(id) {
-        if(!confirm("هل أنت متأكد من حذف هذا الطلب نهائياً؟")) return;
+        if(!confirm("هل أنت متأكد؟")) return;
         document.getElementById('sync-loader').style.display = 'block';
-        const payload = { id: id, action: 'delete' };
-        fetch(_0xU, { method: 'POST', body: JSON.stringify(payload) })
-        .then(() => {
-            sndDel.play(); // تشغيل صوت الحذف
-            fetchData();
-        });
+        fetch(_0xU, { method: 'POST', body: JSON.stringify({ id: id, action: 'delete' }) }).then(() => fetchData());
     }
 
     function renderTable(data) {
         const tbody = document.getElementById('tB');
         tbody.innerHTML = '';
         data.forEach(item => {
-            const row = `<tr>
+            let statusHTML = `<span class="badge ${getStatusClass(item.status)}">${item.status}</span>`;
+            
+            // قفل التعديل: يظهر الـ Select فقط للأدمن، الفني يرى نصاً ثابتاً بعد الإضافة
+            if (currentUserRole === 'admin') {
+                statusHTML = `
+                    <select class="status-select" onchange="updateStatus('${item.id}', this.value)">
+                        <option value="طلب جديد" ${item.status === 'طلب جديد' ? 'selected' : ''}>جديد</option>
+                        <option value="تحت الإجراء" ${item.status === 'تحت الإجراء' ? 'selected' : ''}>إجراء</option>
+                        <option value="منجز" ${item.status === 'منجز' ? 'selected' : ''}>منجز</option>
+                        <option value="مدير المشروع" ${item.status === 'مدير المشروع' ? 'selected' : ''}>م.مشروع</option>
+                        <option value="مدير الصيانة" ${item.status === 'مدير الصيانة' ? 'selected' : ''}>م.صيانة</option>
+                    </select>`;
+            }
+
+            const delAction = (currentUserRole === 'admin') ? `<td><button class="btn-del" onclick="deleteRequest('${item.id}')">حذف</button></td>` : '';
+            
+            tbody.innerHTML += `<tr>
                 <td>${item.id}</td>
                 <td>${item.location}</td>
                 <td>${item.desc}</td>
-                <td><span class="badge ${getStatusClass(item.status)}">${item.status}</span></td>
-                <td><button class="btn-del" onclick="deleteRequest('${item.id}')">حذف</button></td>
+                <td>${statusHTML}</td>
+                ${delAction}
             </tr>`;
-            tbody.innerHTML += row;
         });
         updateStats();
     }
@@ -201,7 +217,9 @@
         let s = { total:0, new:0, pro:0, done:0, pm:0, mm:0 };
         rows.forEach(r => {
             if(r.style.display !== "none") {
-                 const status = r.cells[3].innerText.trim();
+                 let status = "";
+                 const sel = r.querySelector('select');
+                 status = sel ? sel.value : r.cells[3].innerText.trim();
                  s.total++;
                  if(status === 'طلب جديد') s.new++;
                  if(status === 'تحت الإجراء') s.pro++;
@@ -222,9 +240,9 @@
     function filterByStatus(status, el) {
         document.querySelectorAll('.stat-card').forEach(c => c.classList.remove('active-filter'));
         el.classList.add('active-filter');
-        const rows = document.querySelectorAll("#tB tr");
-        rows.forEach(r => {
-            const rStatus = r.cells[3].innerText.trim();
+        document.querySelectorAll("#tB tr").forEach(r => {
+            const sel = r.querySelector('select');
+            const rStatus = sel ? sel.value : r.cells[3].innerText.trim();
             r.style.display = (status === 'الكل' || rStatus === status) ? "" : "none";
         });
         updateStats();
