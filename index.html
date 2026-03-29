@@ -3,47 +3,44 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>نظام الصيانة  - م. حسين العلي</title>
-    <script src="https://cdnjs.cloudflare.com"></script>
+    <title>نظام الصيانة - م. حسين العلي</title>
     <style>
         :root { --primary: #0288D1; --sky: #E3F2FD; --dark-blue: #1565C0; --success: #10B981; --warning: #F59E0B; --danger: #EF4444; --gray: #94A3B8; --light-sky: #00B0FF; }
-        body { font-family: 'Segoe UI', Tahoma, sans-serif; background: #F4F7F9; margin: 0; padding: 0; user-select: none; -webkit-user-select: none; }
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; background: #F4F7F9; margin: 0; padding: 0; user-select: none; }
         
+        /* صفحة الدخول */
         #loginSection { display: flex; align-items: center; justify-content: center; height: 100vh; background: linear-gradient(135deg, var(--sky), #fff); }
-        .login-card { background: white; padding: 40px; border-radius: 25px; box-shadow: 0 20px 50px rgba(2, 136, 209, 0.1); width: 380px; text-align: center; border: 1px solid var(--sky); }
+        .login-card { background: white; padding: 40px; border-radius: 25px; box-shadow: 0 20px 50px rgba(2,136,209,0.1); width: 380px; text-align: center; border: 1px solid var(--sky); }
         .login-card h2 { color: var(--light-sky); margin-bottom: 5px; font-size: 24px; }
         .eng-signature { color: var(--gray); font-size: 14px; margin-bottom: 25px; font-weight: 500; display: block; }
         .login-card input { width: 100%; padding: 14px; margin-bottom: 15px; border: 2px solid #F1F5F9; border-radius: 12px; outline: none; box-sizing: border-box; }
-        .login-card button { width: 100%; padding: 14px; background: var(--primary); color: white; border: none; border-radius: 12px; cursor: pointer; font-weight: bold; transition: 0.3s; }
-        
-        #dashboard { display: none; padding: 25px; position: relative; }
+        .login-card button { width: 100%; padding: 14px; background: var(--primary); color: white; border: none; border-radius: 12px; cursor: pointer; font-weight: bold; }
+
+        #dashboard { display: none; padding: 25px; }
         .container { max-width: 1400px; margin: auto; }
         .header { display: flex; justify-content: space-between; align-items: center; background: white; padding: 15px 25px; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 25px; border-right: 8px solid var(--primary); }
-        .site-picker { background: #f8fafc; border: 2px solid var(--sky); padding: 10px 20px; border-radius: 15px; font-weight: bold; color: var(--dark-blue); cursor: pointer; outline: none; }
         
-        /* ✨ التعديل الجديد للمربعات */
+        /* المربعات التفاعلية */
         .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-bottom: 25px; }
         .stat-card { background: white; padding: 15px; border-radius: 20px; text-align: center; border-top: 5px solid var(--gray); box-shadow: 0 4px 10px rgba(0,0,0,0.03); cursor: pointer; transition: 0.3s; opacity: 0.8; }
-        .stat-card:hover { transform: translateY(-5px); opacity: 1; }
-        .stat-card.active-filter { opacity: 1; transform: scale(1.05); border-bottom: 4px solid var(--primary); box-shadow: 0 10px 20px rgba(2, 136, 209, 0.15); }
+        .stat-card:hover { transform: translateY(-3px); opacity: 1; }
+        .stat-card.active-filter { border-bottom: 4px solid var(--primary); transform: scale(1.05); opacity: 1; box-shadow: 0 10px 20px rgba(2,136,209,0.15); }
         .stat-card p { font-size: 26px; font-weight: 800; margin: 8px 0 0; color: var(--dark-blue); }
         
         .border-total { border-top-color: var(--primary); } .border-new { border-top-color: var(--gray); } .border-process { border-top-color: #00B0FF; } .border-done { border-top-color: var(--success); } .border-pending { border-top-color: var(--warning); } .border-manager { border-top-color: var(--dark-blue); }
         
         .box { background: white; padding: 20px; border-radius: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); margin-bottom: 20px; }
-        .flex-box { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
         table { width: 100%; border-collapse: collapse; }
         th { background: var(--primary); color: white; padding: 12px; text-align: right; }
         td { padding: 10px; border-bottom: 1px solid #F1F5F9; font-size: 13px; }
         .badge { padding: 5px 10px; border-radius: 8px; font-size: 11px; font-weight: 700; display: inline-block; }
         .bg-new { background: #F1F5F9; color: #64748B; } .bg-process { background: #E0F2FE; color: #0369A1; } .bg-done { background: #DCFCE7; color: #15803D; } .bg-pending { background: #FEF3C7; color: #92400E; } .bg-manager { background: #E8EAF6; color: #3F51B5; }
-        #sync-loader { position: fixed; bottom: 20px; left: 20px; background: var(--dark-blue); color: white; padding: 10px 25px; border-radius: 30px; display: none; z-index: 9999; }
-        .col-hide { display: none !important; }
+        #sync-loader { position: fixed; bottom: 20px; left: 20px; background: var(--dark-blue); color: white; padding: 10px 25px; border-radius: 30px; display: none; }
     </style>
 </head>
-<body oncontextmenu="return false;">
+<body>
 
-<div id="sync-loader">⏳ جاري مزامنة البيانات...</div>
+<div id="sync-loader">⏳ جاري تحميل البيانات...</div>
 
 <div id="loginSection">
     <div class="login-card">
@@ -58,50 +55,32 @@
 <div id="dashboard">
     <div class="container">
         <div class="header">
-            <select id="sSel" class="site-picker" onchange="sS(this.value)">
+            <select id="sSel" class="site-picker" onchange="fetchData()" style="padding:10px; border-radius:10px; border:2px solid var(--sky);">
                 <option value="A">🏙️ موقع (GF)</option>
                 <option value="B">🏗️ موقع (FF)</option>
                 <option value="C">🏬 موقع (SF)</option>
                 <option value="D">🏥 موقع (TF)</option>
             </select>
-            <div id="uInf"><span id="uN" style="font-weight:bold; color:var(--primary);"></span> | <button onclick="logout()" style="background:none; border:none; color:var(--danger); cursor:pointer; font-weight:bold;">خروج</button></div>
+            <div><span id="uN" style="font-weight:bold; color:var(--primary);"></span> | <button onclick="location.reload()" style="background:none; border:none; color:var(--danger); cursor:pointer; font-weight:bold;">خروج</button></div>
         </div>
 
-        <!-- 🚀 المربعات مع ميزة الفلترة -->
         <div class="stats-grid">
-            <div class="stat-card border-total active-filter" onclick="filterByStatus('الكل', this)"><h3>المجموع</h3><p id="totalCount">0</p></div>
-            <div class="stat-card border-new" onclick="filterByStatus('طلب جديد', this)"><h3>طلب جديد</h3><p id="newCount">0</p></div>
-            <div class="stat-card border-process" onclick="filterByStatus('تحت الإجراء', this)"><h3>تحت الإجراء</h3><p id="processCount">0</p></div>
-            <div class="stat-card border-done" onclick="filterByStatus('منجز', this)"><h3>مغلق</h3><p id="doneCount">0</p></div>
-            <div class="stat-card border-pending" onclick="filterByStatus('مدير المشروع', this)"><h3>مدير المشروع</h3><p id="pendingCount">0</p></div>
-            <div class="stat-card border-manager" onclick="filterByStatus('مدير الصيانة', this)"><h3>مدير الصيانة</h3><p id="managerCount">0</p></div>
+            <div id="card-all" class="stat-card border-total active-filter" onclick="filterByStatus('الكل', this)"><h3>المجموع</h3><p id="totalCount">0</p></div>
+            <div class="stat-card border-new" onclick="filterByStatus('طلب جديد', this)"><h3>جديد</h3><p id="newCount">0</p></div>
+            <div class="stat-card border-process" onclick="filterByStatus('تحت الإجراء', this)"><h3>إجراء</h3><p id="processCount">0</p></div>
+            <div class="stat-card border-done" onclick="filterByStatus('منجز', this)"><h3>منجز</h3><p id="doneCount">0</p></div>
+            <div class="stat-card border-pending" onclick="filterByStatus('مدير المشروع', this)"><h3>م.المشروع</h3><p id="pendingCount">0</p></div>
+            <div class="stat-card border-manager" onclick="filterByStatus('مدير الصيانة', this)"><h3>م.الصيانة</h3><p id="managerCount">0</p></div>
             <div class="stat-card" style="background:var(--dark-blue); color:white; border-top:none; cursor:default; opacity:1;"><h3>الإنجاز</h3><p id="kpiValue" style="color:white">0%</p></div>
         </div>
 
-        <div id="addBox" class="box">
-            <form id="addForm" class="flex-box">
-                <input type="number" id="reqId" placeholder="رقم الأمر" required style="width:80px;">
-                <input type="text" id="reqLoc" placeholder="الموقع" required style="width:120px;">
-                <input type="text" id="reqDesc" placeholder="الوصف" required style="flex: 0.5; min-width:200px;">
-                <select id="reqStatus">
-                    <option value="طلب جديد">طلب جديد</option>
-                    <option value="تحت الإجراء">تحت الإجراء</option>
-                    <option value="منجز">منجز</option>
-                    <option value="مدير المشروع">مدير المشروع</option>
-                    <option value="مدير الصيانة">مدير الصيانة</option>
-                </select>
-                <button type="submit" style="background:var(--primary); color:white; border:none; padding:10px; border-radius:8px;">حفظ</button>
-            </form>
-        </div>
-
-        <div class="box flex-box">
-            <input type="text" id="searchInp" onkeyup="srT()" placeholder="🔍 ابحث في هذا الموقع..." style="flex:1; padding:10px; border-radius:10px; border:1px solid #ddd;">
-            <button id="btn-export" onclick="eX()" style="background:#34495E; color:white; padding:8px 15px; border-radius:8px;">Excel 📊</button>
+        <div class="box">
+            <input type="text" id="searchInp" onkeyup="srT()" placeholder="🔍 ابحث في هذا الموقع..." style="width:100%; padding:12px; border-radius:10px; border:1px solid #ddd; box-sizing:border-box;">
         </div>
 
         <div class="box" style="padding:0; overflow:hidden;">
             <table>
-                <thead><tr><th>رقم</th><th>المكان</th><th>التاريخ</th><th>الوصف</th><th>الحالة</th><th id="thUpd" class="col-hide">تحديث</th><th id="thDel" class="col-hide">إجراء</th></tr></thead>
+                <thead><tr><th>رقم</th><th>المكان</th><th>الوصف</th><th>الحالة</th></tr></thead>
                 <tbody id="tB"></tbody>
             </table>
         </div>
@@ -109,50 +88,98 @@
 </div>
 
 <script>
-    // --- بياناتك الأصلية كما هي ---
-    const _0xU = 'https://script.google.com/macros/s/AKfycbxBPlPYh-Hc5NDE-91CYALTuhBu_B08JwaBZelM3HEoGlw1VXiVBUGAcJdyNvFSKP0i/exec'; 
+    // الرابط الخاص بك
+    const _0xU = 'https://script.google.com/macros/s/AKfycbxBPlPYh-Hc5NDE-91CYALTuhBu_B08JwaBZelM3HEoGlw1VXiVBUGAcJdyNvFSKP0i/exec';
+    
     const _0xUs = { 
         "admin": {p:"ahsa2024", r:"admin", n:"م. حسين"}, 
         "user1": {p:"11332030@", r:"user", n:"الفني"}, 
         "viewer1": {p:"2030", r:"viewer", n:"المراقب"} 
     };
 
-    // --- وظيفة الفلترة الجديدة مع التأثير البصري ---
-    function filterByStatus(status, element) {
-        document.querySelectorAll('.stat-card').forEach(card => card.classList.remove('active-filter'));
-        if(element) element.classList.add('active-filter');
+    function hL() {
+        const u = document.getElementById('uInp').value;
+        const p = document.getElementById('pInp').value;
+        if (_0xUs[u] && _0xUs[u].p === p) {
+            document.getElementById('loginSection').style.display = 'none';
+            document.getElementById('dashboard').style.display = 'block';
+            document.getElementById('uN').innerText = _0xUs[u].n;
+            fetchData();
+        } else { alert("خطأ في البيانات"); }
+    }
 
+    function fetchData() {
+        document.getElementById('sync-loader').style.display = 'block';
+        fetch(_0xU)
+            .then(res => res.json())
+            .then(data => {
+                const site = document.getElementById('sSel').value;
+                const filtered = data.filter(item => item.site === site);
+                renderTable(filtered);
+                document.getElementById('sync-loader').style.display = 'none';
+            });
+    }
+
+    function renderTable(data) {
+        const tbody = document.getElementById('tB');
+        tbody.innerHTML = '';
+        data.forEach(item => {
+            const row = `<tr>
+                <td>${item.id}</td>
+                <td>${item.location}</td>
+                <td>${item.desc}</td>
+                <td><span class="badge ${getStatusClass(item.status)}">${item.status}</span></td>
+            </tr>`;
+            tbody.innerHTML += row;
+        });
+        updateStats();
+    }
+
+    function getStatusClass(s) {
+        if(s === 'طلب جديد') return 'bg-new';
+        if(s === 'تحت الإجراء') return 'bg-process';
+        if(s === 'منجز') return 'bg-done';
+        if(s === 'مدير المشروع') return 'bg-pending';
+        return 'bg-manager';
+    }
+
+    function updateStats() {
         const rows = document.querySelectorAll("#tB tr");
-        rows.forEach(row => {
-            const rowStatus = row.cells[4].innerText.trim(); // فحص عمود الحالة (الخامس)
-            row.style.display = (status === 'الكل' || rowStatus === status) ? "" : "none";
+        let s = { total:0, new:0, pro:0, done:0, pm:0, mm:0 };
+        rows.forEach(r => {
+            const status = r.cells[3].innerText.trim();
+            s.total++;
+            if(status === 'طلب جديد') s.new++;
+            if(status === 'تحت الإجراء') s.pro++;
+            if(status === 'منجز') s.done++;
+            if(status === 'مدير المشروع') s.pm++;
+            if(status === 'مدير الصيانة') s.mm++;
+        });
+        document.getElementById("totalCount").innerText = s.total;
+        document.getElementById("newCount").innerText = s.new;
+        document.getElementById("processCount").innerText = s.pro;
+        document.getElementById("doneCount").innerText = s.done;
+        document.getElementById("pendingCount").innerText = s.pm;
+        document.getElementById("managerCount").innerText = s.mm;
+        document.getElementById("kpiValue").innerText = s.total > 0 ? Math.round((s.done/s.total)*100) + "%" : "0%";
+    }
+
+    function filterByStatus(status, el) {
+        document.querySelectorAll('.stat-card').forEach(c => c.classList.remove('active-filter'));
+        el.classList.add('active-filter');
+        const rows = document.querySelectorAll("#tB tr");
+        rows.forEach(r => {
+            const rStatus = r.cells[3].innerText.trim();
+            r.style.display = (status === 'الكل' || rStatus === status) ? "" : "none";
         });
     }
 
-    // --- وظيفة تحديث العدادات الذكية ---
-    function updateLiveStats() {
-        const rows = document.querySelectorAll("#tB tr");
-        let stats = { "الكل": 0, "طلب جديد": 0, "تحت الإجراء": 0, "منجز": 0, "مدير المشروع": 0, "مدير الصيانة": 0 };
-
-        rows.forEach(row => {
-            const status = row.cells[4].innerText.trim();
-            stats["الكل"]++;
-            if (stats.hasOwnProperty(status)) stats[status]++;
+    function srT() {
+        const val = document.getElementById("searchInp").value.toLowerCase();
+        document.querySelectorAll("#tB tr").forEach(r => {
+            r.style.display = r.innerText.toLowerCase().includes(val) ? "" : "none";
         });
-
-        document.getElementById("totalCount").innerText = stats["الكل"];
-        document.getElementById("newCount").innerText = stats["طلب جديد"];
-        document.getElementById("processCount").innerText = stats["تحت الإجراء"];
-        document.getElementById("doneCount").innerText = stats["منجز"];
-        document.getElementById("pendingCount").innerText = stats["مدير المشروع"];
-        document.getElementById("managerCount").innerText = stats["مدير الصيانة"];
-
-        const kpi = stats["الكل"] > 0 ? Math.round((stats["منجز"] / stats["الكل"]) * 100) : 0;
-        document.getElementById("kpiValue").innerText = kpi + "%";
     }
-
-    // ملاحظة: تأكد من استدعاء updateLiveStats() داخل دالة رسم الجدول (التي تجلب البيانات من Google Sheet) 
-    // لكي تظهر الأرقام فور فتح الصفحة.
 </script>
 </body>
 </html>
