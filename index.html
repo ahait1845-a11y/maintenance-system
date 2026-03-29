@@ -7,27 +7,21 @@
     <style>
         :root { --primary: #0288D1; --sky: #E3F2FD; --dark-blue: #1565C0; --success: #10B981; --warning: #F59E0B; --danger: #EF4444; --gray: #94A3B8; --light-sky: #00B0FF; }
         body { font-family: 'Segoe UI', Tahoma, sans-serif; background: #F4F7F9; margin: 0; padding: 0; user-select: none; }
-        
-        /* صفحة الدخول */
         #loginSection { display: flex; align-items: center; justify-content: center; height: 100vh; background: linear-gradient(135deg, var(--sky), #fff); }
         .login-card { background: white; padding: 40px; border-radius: 25px; box-shadow: 0 20px 50px rgba(2,136,209,0.1); width: 380px; text-align: center; border: 1px solid var(--sky); }
         .login-card h2 { color: var(--light-sky); margin-bottom: 5px; font-size: 24px; }
         .eng-signature { color: var(--gray); font-size: 14px; margin-bottom: 25px; font-weight: 500; display: block; }
         .login-card input { width: 100%; padding: 14px; margin-bottom: 15px; border: 2px solid #F1F5F9; border-radius: 12px; outline: none; box-sizing: border-box; }
         .login-card button { width: 100%; padding: 14px; background: var(--primary); color: white; border: none; border-radius: 12px; cursor: pointer; font-weight: bold; }
-
         #dashboard { display: none; padding: 25px; }
         .container { max-width: 1400px; margin: auto; }
         .header { display: flex; justify-content: space-between; align-items: center; background: white; padding: 15px 25px; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 25px; border-right: 8px solid var(--primary); }
-        
         .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-bottom: 25px; }
         .stat-card { background: white; padding: 15px; border-radius: 20px; text-align: center; border-top: 5px solid var(--gray); box-shadow: 0 4px 10px rgba(0,0,0,0.03); cursor: pointer; transition: 0.3s; opacity: 0.8; }
         .stat-card:hover { transform: translateY(-3px); opacity: 1; }
         .stat-card.active-filter { border-bottom: 4px solid var(--primary); transform: scale(1.05); opacity: 1; box-shadow: 0 10px 20px rgba(2,136,209,0.15); }
         .stat-card p { font-size: 26px; font-weight: 800; margin: 8px 0 0; color: var(--dark-blue); }
-        
         .border-total { border-top-color: var(--primary); } .border-new { border-top-color: var(--gray); } .border-process { border-top-color: #00B0FF; } .border-done { border-top-color: var(--success); } .border-pending { border-top-color: var(--warning); } .border-manager { border-top-color: var(--dark-blue); }
-        
         .box { background: white; padding: 20px; border-radius: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); margin-bottom: 20px; }
         .flex-box { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
         table { width: 100%; border-collapse: collapse; }
@@ -35,7 +29,6 @@
         td { padding: 10px; border-bottom: 1px solid #F1F5F9; font-size: 13px; }
         .badge { padding: 5px 10px; border-radius: 8px; font-size: 11px; font-weight: 700; display: inline-block; }
         .bg-new { background: #F1F5F9; color: #64748B; } .bg-process { background: #E0F2FE; color: #0369A1; } .bg-done { background: #DCFCE7; color: #15803D; } .bg-pending { background: #FEF3C7; color: #92400E; } .bg-manager { background: #E8EAF6; color: #3F51B5; }
-        
         #sync-loader { position: fixed; bottom: 20px; left: 20px; background: var(--dark-blue); color: white; padding: 10px 25px; border-radius: 30px; display: none; z-index: 999; }
         input, select { padding: 8px; border-radius: 8px; border: 1px solid #ddd; outline: none; }
         .btn-del { background: var(--danger); color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; font-size: 11px; font-weight: bold; }
@@ -44,7 +37,7 @@
 </head>
 <body>
 
-<div id="sync-loader">⏳ جاري المعالجة...</div>
+<div id="sync-loader">⏳ جاري المزامنة...</div>
 
 <div id="loginSection">
     <div class="login-card">
@@ -65,16 +58,16 @@
                 <option value="C">🏬 موقع (SF)</option>
                 <option value="D">🏥 موقع (TF)</option>
             </select>
-            <div><span id="uN" style="font-weight:bold; color:var(--primary);"></span> | <button onclick="location.reload()" style="background:none; border:none; color:var(--danger); cursor:pointer; font-weight:bold;">خروج</button></div>
+            <div><span id="uN" style="font-weight:bold; color:var(--primary);"></span> | <button onclick="logout()" style="background:none; border:none; color:var(--danger); cursor:pointer; font-weight:bold;">خروج</button></div>
         </div>
 
         <div class="stats-grid">
-            <div id="card-all" class="stat-card border-total active-filter" onclick="filterByStatus('الكل', this)"><h3>المجموع</h3><p id="totalCount">0</p></div>
-            <div class="stat-card border-new" onclick="filterByStatus('طلب جديد', this)"><h3>جديد</h3><p id="newCount">0</p></div>
-            <div class="stat-card border-process" onclick="filterByStatus('تحت الإجراء', this)"><h3>إجراء</h3><p id="processCount">0</p></div>
-            <div class="stat-card border-done" onclick="filterByStatus('منجز', this)"><h3>منجز</h3><p id="doneCount">0</p></div>
-            <div class="stat-card border-pending" onclick="filterByStatus('مدير المشروع', this)"><h3>م.المشروع</h3><p id="pendingCount">0</p></div>
-            <div class="stat-card border-manager" onclick="filterByStatus('مدير الصيانة', this)"><h3>م.الصيانة</h3><p id="managerCount">0</p></div>
+            <div id="card-all" class="stat-card border-total active-filter" onclick="setFilter('الكل', this)"><h3>المجموع</h3><p id="totalCount">0</p></div>
+            <div class="stat-card border-new" onclick="setFilter('طلب جديد', this)"><h3>جديد</h3><p id="newCount">0</p></div>
+            <div class="stat-card border-process" onclick="setFilter('تحت الإجراء', this)"><h3>إجراء</h3><p id="processCount">0</p></div>
+            <div class="stat-card border-done" onclick="setFilter('منجز', this)"><h3>منجز</h3><p id="doneCount">0</p></div>
+            <div class="stat-card border-pending" onclick="setFilter('مدير المشروع', this)"><h3>م.المشروع</h3><p id="pendingCount">0</p></div>
+            <div class="stat-card border-manager" onclick="setFilter('مدير الصيانة', this)"><h3>م.الصيانة</h3><p id="managerCount">0</p></div>
             <div class="stat-card" style="background:var(--dark-blue); color:white; border-top:none; cursor:default; opacity:1;"><h3>الإنجاز</h3><p id="kpiValue" style="color:white">0%</p></div>
         </div>
 
@@ -87,13 +80,15 @@
                     <option value="طلب جديد">طلب جديد</option>
                     <option value="تحت الإجراء">تحت الإجراء</option>
                     <option value="منجز">منجز</option>
+                    <option value="مدير المشروع">مدير المشروع</option>
+                    <option value="مدير الصيانة">مدير الصيانة</option>
                 </select>
                 <button type="submit" style="background:var(--success); color:white; border:none; padding:10px 20px; border-radius:10px; cursor:pointer; font-weight:bold;">+ إضافة طلب</button>
             </form>
         </div>
 
         <div class="box">
-            <input type="text" id="searchInp" onkeyup="srT()" placeholder="🔍 ابحث في هذا الموقع..." style="width:100%; box-sizing:border-box;">
+            <input type="text" id="searchInp" onkeyup="applyFilterAndSearch()" placeholder="🔍 ابحث في هذا الموقع..." style="width:100%; box-sizing:border-box;">
         </div>
 
         <div class="box" style="padding:0; overflow:hidden;">
@@ -110,26 +105,36 @@
     const sndAdd = new Audio('https://assets.mixkit.co');
     const sndUpd = new Audio('https://assets.mixkit.co');
 
-    const _0xUs = { 
-        "admin": {p:"ahsa2024", r:"admin", n:"م. حسين"}, 
-        "user1": {p:"11332030@", r:"user", n:"الفني"}, 
-        "viewer1": {p:"2030", r:"viewer", n:"المراقب"} 
-    };
+    const _0xUs = { "admin": {p:"ahsa2024", r:"admin", n:"م. حسين"}, "user1": {p:"11332030@", r:"user", n:"الفني"}, "viewer1": {p:"2030", r:"viewer", n:"المراقب"} };
+    let currentUserRole = ""; 
+    let currentStatusFilter = "الكل";
 
-    let currentUserRole = "";
+    window.onload = function() {
+        const loggedIn = localStorage.getItem('isLoggedIn');
+        const user = localStorage.getItem('loggedUser');
+        if (loggedIn === 'true' && user && _0xUs[user]) { setupDashboard(user); }
+    };
 
     function hL() {
         const u = document.getElementById('uInp').value;
         const p = document.getElementById('pInp').value;
         if (_0xUs[u] && _0xUs[u].p === p) {
-            currentUserRole = _0xUs[u].r;
-            document.getElementById('loginSection').style.display = 'none';
-            document.getElementById('dashboard').style.display = 'block';
-            document.getElementById('uN').innerText = _0xUs[u].n;
-            checkPermissions();
-            fetchData();
+            localStorage.setItem('isLoggedIn', 'true');
+            localStorage.setItem('loggedUser', u);
+            setupDashboard(u);
         } else { alert("خطأ في البيانات"); }
     }
+
+    function setupDashboard(u) {
+        currentUserRole = _0xUs[u].r;
+        document.getElementById('loginSection').style.display = 'none';
+        document.getElementById('dashboard').style.display = 'block';
+        document.getElementById('uN').innerText = _0xUs[u].n;
+        checkPermissions();
+        fetchData();
+    }
+
+    function logout() { localStorage.clear(); location.reload(); }
 
     function checkPermissions() {
         document.getElementById('addBox').style.display = (currentUserRole === 'viewer') ? 'none' : 'block';
@@ -137,56 +142,34 @@
     }
 
     function fetchData() {
-        document.getElementById('sync-loader').style.display = 'block';
         fetch(_0xU).then(res => res.json()).then(data => {
             const site = document.getElementById('sSel').value;
             renderTable(data.filter(item => item.site === site));
-            document.getElementById('sync-loader').style.display = 'none';
         });
     }
 
-    // --- دالة الإضافة مع منع التكرار ---
     function addNewRequest() {
         const idInput = document.getElementById('reqId').value;
-        
-        // منع التكرار بناءً على الجدول الحالي
-        const rows = document.querySelectorAll("#tB tr");
+        const rows = document.querySelectorAll("#tB tr td:first-child");
         let isDuplicate = false;
-        rows.forEach(r => {
-            if (r.cells[0].innerText.trim() === idInput.trim()) { isDuplicate = true; }
-        });
+        rows.forEach(td => { if (td.innerText.trim() === idInput.trim()) isDuplicate = true; });
 
-        if (isDuplicate) {
-            alert("⚠️ خطأ: رقم الأمر هذا مسجل مسبقاً في هذا النظام!");
-            return;
-        }
+        if (isDuplicate) { alert("⚠️ رقم الأمر مكرر!"); return; }
 
         document.getElementById('sync-loader').style.display = 'block';
-        const payload = {
-            id: idInput,
-            location: document.getElementById('reqLoc').value,
-            date: new Date().toLocaleDateString('en-GB'),
-            desc: document.getElementById('reqDesc').value,
-            status: document.getElementById('reqStatus').value,
-            site: document.getElementById('sSel').value,
-            action: 'add'
-        };
-        fetch(_0xU, { method: 'POST', body: JSON.stringify(payload) }).then(() => {
-            sndAdd.play(); document.getElementById('addForm').reset(); fetchData();
-        });
+        const payload = { id: idInput, location: document.getElementById('reqLoc').value, date: new Date().toLocaleDateString('en-GB'), desc: document.getElementById('reqDesc').value, status: document.getElementById('reqStatus').value, site: document.getElementById('sSel').value, action: 'add' };
+        fetch(_0xU, { method: 'POST', body: JSON.stringify(payload) }).then(() => { sndAdd.play(); document.getElementById('addForm').reset(); fetchData(); document.getElementById('sync-loader').style.display = 'none'; });
     }
 
     function updateStatus(id, newStatus) {
         document.getElementById('sync-loader').style.display = 'block';
-        fetch(_0xU, { method: 'POST', body: JSON.stringify({ id: id, status: newStatus, action: 'update' }) }).then(() => {
-            sndUpd.play(); fetchData();
-        });
+        fetch(_0xU, { method: 'POST', body: JSON.stringify({ id: id, status: newStatus, action: 'update' }) }).then(() => { sndUpd.play(); fetchData(); document.getElementById('sync-loader').style.display = 'none'; });
     }
 
     function deleteRequest(id) {
-        if(!confirm("هل أنت متأكد من حذف الطلب؟")) return;
+        if(!confirm("حذف؟")) return;
         document.getElementById('sync-loader').style.display = 'block';
-        fetch(_0xU, { method: 'POST', body: JSON.stringify({ id: id, action: 'delete' }) }).then(() => fetchData());
+        fetch(_0xU, { method: 'POST', body: JSON.stringify({ id: id, action: 'delete' }) }).then(() => { fetchData(); document.getElementById('sync-loader').style.display = 'none'; });
     }
 
     function renderTable(data) {
@@ -195,84 +178,59 @@
         data.forEach(item => {
             let statusHTML = `<span class="badge ${getStatusClass(item.status)}">${item.status}</span>`;
             if (currentUserRole === 'admin') {
-                statusHTML = `
-                    <select class="status-select" onchange="updateStatus('${item.id}', this.value)">
-                        <option value="طلب جديد" ${item.status === 'طلب جديد' ? 'selected' : ''}>جديد</option>
-                        <option value="تحت الإجراء" ${item.status === 'تحت الإجراء' ? 'selected' : ''}>إجراء</option>
-                        <option value="منجز" ${item.status === 'منجز' ? 'selected' : ''}>منجز</option>
-                        <option value="مدير المشروع" ${item.status === 'مدير المشروع' ? 'selected' : ''}>م.مشروع</option>
-                        <option value="مدير الصيانة" ${item.status === 'مدير الصيانة' ? 'selected' : ''}>م.صيانة</option>
-                    </select>`;
+                statusHTML = `<select class="status-select" onchange="updateStatus('${item.id}', this.value)">
+                    <option value="طلب جديد" ${item.status === 'طلب جديد' ? 'selected' : ''}>جديد</option>
+                    <option value="تحت الإجراء" ${item.status === 'تحت الإجراء' ? 'selected' : ''}>إجراء</option>
+                    <option value="منجز" ${item.status === 'منجز' ? 'selected' : ''}>منجز</option>
+                    <option value="مدير المشروع" ${item.status === 'مدير المشروع' ? 'selected' : ''}>م.مشروع</option>
+                    <option value="مدير الصيانة" ${item.status === 'مدير الصيانة' ? 'selected' : ''}>م.صيانة</option>
+                </select>`;
             }
             const delAction = (currentUserRole === 'admin') ? `<td><button class="btn-del" onclick="deleteRequest('${item.id}')">حذف</button></td>` : '';
-            tbody.innerHTML += `<tr>
-                <td style="font-weight:bold;">${item.id}</td>
-                <td>${item.location}</td>
-                <td>${item.desc}</td>
-                <td>${statusHTML}</td>
-                ${delAction}
-            </tr>`;
+            tbody.innerHTML += `<tr><td>${item.id}</td><td>${item.location}</td><td>${item.desc}</td><td>${statusHTML}</td>${delAction}</tr>`;
         });
         updateStats();
+        applyFilterAndSearch(); // إعادة تطبيق البحث والفلتر فوراً بعد الرسم
     }
 
     function getStatusClass(s) {
-        if(s === 'طلب جديد') return 'bg-new';
-        if(s === 'تحت الإجراء') return 'bg-process';
-        if(s === 'منجز') return 'bg-done';
-        if(s === 'مدير المشروع') return 'bg-pending';
-        return 'bg-manager';
+        if(s === 'طلب جديد') return 'bg-new'; if(s === 'تحت الإجراء') return 'bg-process'; if(s === 'منجز') return 'bg-done'; if(s === 'مدير المشروع') return 'bg-pending'; return 'bg-manager';
     }
 
     function updateStats() {
         const rows = document.querySelectorAll("#tB tr");
         let s = { total:0, new:0, pro:0, done:0, pm:0, mm:0 };
         rows.forEach(r => {
-            if(r.style.display !== "none") {
-                 let status = "";
-                 const sel = r.querySelector('select');
-                 status = sel ? sel.value : r.cells[3].innerText.trim();
-                 s.total++;
-                 if(status === 'طلب جديد') s.new++;
-                 if(status === 'تحت الإجراء') s.pro++;
-                 if(status === 'منجز') s.done++;
-                 if(status === 'مدير المشروع') s.pm++;
-                 if(status === 'مدير الصيانة') s.mm++;
-            }
+            let st = r.querySelector('select') ? r.querySelector('select').value : r.cells[3].innerText.trim();
+            s.total++; if(st === 'طلب جديد') s.new++; if(st === 'تحت الإجراء') s.pro++; if(st === 'منجز') s.done++; if(st === 'مدير المشروع') s.pm++; if(st === 'مدير الصيانة') s.mm++;
         });
-        document.getElementById("totalCount").innerText = s.total;
-        document.getElementById("newCount").innerText = s.new;
-        document.getElementById("processCount").innerText = s.pro;
-        document.getElementById("doneCount").innerText = s.done;
-        document.getElementById("pendingCount").innerText = s.pm;
-        document.getElementById("managerCount").innerText = s.mm;
+        document.getElementById("totalCount").innerText = s.total; document.getElementById("newCount").innerText = s.new; document.getElementById("processCount").innerText = s.pro; document.getElementById("doneCount").innerText = s.done; document.getElementById("pendingCount").innerText = s.pm; document.getElementById("managerCount").innerText = s.mm;
         document.getElementById("kpiValue").innerText = s.total > 0 ? Math.round((s.done/s.total)*100) + "%" : "0%";
     }
 
-    function filterByStatus(status, el) {
+    function setFilter(status, el) {
+        currentStatusFilter = status;
         document.querySelectorAll('.stat-card').forEach(c => c.classList.remove('active-filter'));
         el.classList.add('active-filter');
-        document.querySelectorAll("#tB tr").forEach(r => {
-            const sel = r.querySelector('select');
-            const rStatus = sel ? sel.value : r.cells[3].innerText.trim();
-            r.style.display = (status === 'الكل' || rStatus === status) ? "" : "none";
-        });
-        updateStats();
+        applyFilterAndSearch();
     }
 
-    function srT() {
-        const val = document.getElementById("searchInp").value.toLowerCase();
-        document.querySelectorAll("#tB tr").forEach(r => {
-            r.style.display = r.innerText.toLowerCase().includes(val) ? "" : "none";
+    function applyFilterAndSearch() {
+        const searchVal = document.getElementById("searchInp").value.toLowerCase();
+        const rows = document.querySelectorAll("#tB tr");
+        rows.forEach(r => {
+            const select = r.querySelector('select');
+            const rStatus = select ? select.value : r.cells[3].innerText.trim();
+            const matchesFilter = (currentStatusFilter === 'الكل' || rStatus === currentStatusFilter);
+            const matchesSearch = r.innerText.toLowerCase().includes(searchVal);
+            r.style.display = (matchesFilter && matchesSearch) ? "" : "none";
         });
-        updateStats();
     }
-    setInterval(function() {
-    if (document.getElementById('dashboard').style.display === 'block') {
-        fetchData(); 
-        console.log("تم تحديث البيانات تلقائياً...");
-    }
-}, 30000); // 30000 ميلي ثانية = 30 ثان
+
+    // التحديث التلقائي كل 30 ثانية مع الحفاظ على الحالة
+    setInterval(() => { 
+        if (document.getElementById('dashboard').style.display === 'block') fetchData(); 
+    }, 30000);
 </script>
 </body>
 </html>
