@@ -267,6 +267,12 @@
         });
         updateStats();
     }
+    setInterval(function() {
+    if (document.getElementById('dashboard').style.display === 'block') {
+        fetchData(); 
+        console.log("تم تحديث البيانات تلقائياً...");
+    }
+}, 30000); // 30000 ميلي ثانية = 30 ثان
 </script>
 </body>
 </html>
