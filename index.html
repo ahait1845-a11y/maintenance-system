@@ -8,6 +8,7 @@
         :root { --primary: #0288D1; --sky: #E3F2FD; --dark-blue: #1565C0; --success: #10B981; --warning: #F59E0B; --danger: #EF4444; --gray: #94A3B8; --light-sky: #00B0FF; }
         body { font-family: 'Segoe UI', Tahoma, sans-serif; background: #F4F7F9; margin: 0; padding: 0; user-select: none; }
         
+        /* صفحة الدخول */
         #loginSection { display: flex; align-items: center; justify-content: center; height: 100vh; background: linear-gradient(135deg, var(--sky), #fff); }
         .login-card { background: white; padding: 40px; border-radius: 25px; box-shadow: 0 20px 50px rgba(2,136,209,0.1); width: 380px; text-align: center; border: 1px solid var(--sky); }
         .login-card h2 { color: var(--light-sky); margin-bottom: 5px; font-size: 24px; }
@@ -36,7 +37,7 @@
         .bg-new { background: #F1F5F9; color: #64748B; } .bg-process { background: #E0F2FE; color: #0369A1; } .bg-done { background: #DCFCE7; color: #15803D; } .bg-pending { background: #FEF3C7; color: #92400E; } .bg-manager { background: #E8EAF6; color: #3F51B5; }
         
         #sync-loader { position: fixed; bottom: 20px; left: 20px; background: var(--dark-blue); color: white; padding: 10px 25px; border-radius: 30px; display: none; z-index: 999; }
-        input, select { padding: 8px; border-radius: 8px; border: 1px solid #ddd; outline: none; font-family: inherit; }
+        input, select { padding: 8px; border-radius: 8px; border: 1px solid #ddd; outline: none; }
         .btn-del { background: var(--danger); color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; font-size: 11px; font-weight: bold; }
         .status-select { font-size: 12px; cursor: pointer; background: #fff; border: 1px solid var(--primary); color: var(--dark-blue); font-weight: bold; }
     </style>
@@ -97,7 +98,7 @@
 
         <div class="box" style="padding:0; overflow:hidden;">
             <table>
-                <thead><tr><th>رقم</th><th>المكان</th><th>الوصف</th><th>الحالة</th><th id="actionHeader">إجراء</th></tr></thead>
+                <thead><tr><th>رقم الأمر</th><th>المكان</th><th>الوصف</th><th>الحالة</th><th id="actionHeader">إجراء</th></tr></thead>
                 <tbody id="tB"></tbody>
             </table>
         </div>
@@ -144,10 +145,25 @@
         });
     }
 
+    // --- دالة الإضافة مع منع التكرار ---
     function addNewRequest() {
+        const idInput = document.getElementById('reqId').value;
+        
+        // منع التكرار بناءً على الجدول الحالي
+        const rows = document.querySelectorAll("#tB tr");
+        let isDuplicate = false;
+        rows.forEach(r => {
+            if (r.cells[0].innerText.trim() === idInput.trim()) { isDuplicate = true; }
+        });
+
+        if (isDuplicate) {
+            alert("⚠️ خطأ: رقم الأمر هذا مسجل مسبقاً في هذا النظام!");
+            return;
+        }
+
         document.getElementById('sync-loader').style.display = 'block';
         const payload = {
-            id: document.getElementById('reqId').value,
+            id: idInput,
             location: document.getElementById('reqLoc').value,
             date: new Date().toLocaleDateString('en-GB'),
             desc: document.getElementById('reqDesc').value,
@@ -168,7 +184,7 @@
     }
 
     function deleteRequest(id) {
-        if(!confirm("هل أنت متأكد؟")) return;
+        if(!confirm("هل أنت متأكد من حذف الطلب؟")) return;
         document.getElementById('sync-loader').style.display = 'block';
         fetch(_0xU, { method: 'POST', body: JSON.stringify({ id: id, action: 'delete' }) }).then(() => fetchData());
     }
@@ -178,8 +194,6 @@
         tbody.innerHTML = '';
         data.forEach(item => {
             let statusHTML = `<span class="badge ${getStatusClass(item.status)}">${item.status}</span>`;
-            
-            // قفل التعديل: يظهر الـ Select فقط للأدمن، الفني يرى نصاً ثابتاً بعد الإضافة
             if (currentUserRole === 'admin') {
                 statusHTML = `
                     <select class="status-select" onchange="updateStatus('${item.id}', this.value)">
@@ -190,11 +204,9 @@
                         <option value="مدير الصيانة" ${item.status === 'مدير الصيانة' ? 'selected' : ''}>م.صيانة</option>
                     </select>`;
             }
-
             const delAction = (currentUserRole === 'admin') ? `<td><button class="btn-del" onclick="deleteRequest('${item.id}')">حذف</button></td>` : '';
-            
             tbody.innerHTML += `<tr>
-                <td>${item.id}</td>
+                <td style="font-weight:bold;">${item.id}</td>
                 <td>${item.location}</td>
                 <td>${item.desc}</td>
                 <td>${statusHTML}</td>
