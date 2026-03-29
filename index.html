@@ -8,7 +8,6 @@
         :root { --primary: #0288D1; --sky: #E3F2FD; --dark-blue: #1565C0; --success: #10B981; --warning: #F59E0B; --danger: #EF4444; --gray: #94A3B8; --light-sky: #00B0FF; }
         body { font-family: 'Segoe UI', Tahoma, sans-serif; background: #F4F7F9; margin: 0; padding: 0; user-select: none; }
         
-        /* صفحة الدخول */
         #loginSection { display: flex; align-items: center; justify-content: center; height: 100vh; background: linear-gradient(135deg, var(--sky), #fff); }
         .login-card { background: white; padding: 40px; border-radius: 25px; box-shadow: 0 20px 50px rgba(2,136,209,0.1); width: 380px; text-align: center; border: 1px solid var(--sky); }
         .login-card h2 { color: var(--light-sky); margin-bottom: 5px; font-size: 24px; }
@@ -20,7 +19,6 @@
         .container { max-width: 1400px; margin: auto; }
         .header { display: flex; justify-content: space-between; align-items: center; background: white; padding: 15px 25px; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 25px; border-right: 8px solid var(--primary); }
         
-        /* المربعات التفاعلية */
         .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-bottom: 25px; }
         .stat-card { background: white; padding: 15px; border-radius: 20px; text-align: center; border-top: 5px solid var(--gray); box-shadow: 0 4px 10px rgba(0,0,0,0.03); cursor: pointer; transition: 0.3s; opacity: 0.8; }
         .stat-card:hover { transform: translateY(-3px); opacity: 1; }
@@ -30,17 +28,21 @@
         .border-total { border-top-color: var(--primary); } .border-new { border-top-color: var(--gray); } .border-process { border-top-color: #00B0FF; } .border-done { border-top-color: var(--success); } .border-pending { border-top-color: var(--warning); } .border-manager { border-top-color: var(--dark-blue); }
         
         .box { background: white; padding: 20px; border-radius: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); margin-bottom: 20px; }
+        .flex-box { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
         table { width: 100%; border-collapse: collapse; }
         th { background: var(--primary); color: white; padding: 12px; text-align: right; }
         td { padding: 10px; border-bottom: 1px solid #F1F5F9; font-size: 13px; }
         .badge { padding: 5px 10px; border-radius: 8px; font-size: 11px; font-weight: 700; display: inline-block; }
         .bg-new { background: #F1F5F9; color: #64748B; } .bg-process { background: #E0F2FE; color: #0369A1; } .bg-done { background: #DCFCE7; color: #15803D; } .bg-pending { background: #FEF3C7; color: #92400E; } .bg-manager { background: #E8EAF6; color: #3F51B5; }
-        #sync-loader { position: fixed; bottom: 20px; left: 20px; background: var(--dark-blue); color: white; padding: 10px 25px; border-radius: 30px; display: none; }
+        
+        #sync-loader { position: fixed; bottom: 20px; left: 20px; background: var(--dark-blue); color: white; padding: 10px 25px; border-radius: 30px; display: none; z-index: 999; }
+        input, select { padding: 10px; border-radius: 10px; border: 1px solid #ddd; outline: none; }
+        .btn-del { background: var(--danger); color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; font-size: 11px; font-weight: bold; }
     </style>
 </head>
 <body>
 
-<div id="sync-loader">⏳ جاري تحميل البيانات...</div>
+<div id="sync-loader">⏳ جاري المعالجة...</div>
 
 <div id="loginSection">
     <div class="login-card">
@@ -55,7 +57,7 @@
 <div id="dashboard">
     <div class="container">
         <div class="header">
-            <select id="sSel" class="site-picker" onchange="fetchData()" style="padding:10px; border-radius:10px; border:2px solid var(--sky);">
+            <select id="sSel" class="site-picker" onchange="fetchData()">
                 <option value="A">🏙️ موقع (GF)</option>
                 <option value="B">🏗️ موقع (FF)</option>
                 <option value="C">🏬 موقع (SF)</option>
@@ -74,13 +76,29 @@
             <div class="stat-card" style="background:var(--dark-blue); color:white; border-top:none; cursor:default; opacity:1;"><h3>الإنجاز</h3><p id="kpiValue" style="color:white">0%</p></div>
         </div>
 
+        <div id="addBox" class="box">
+            <form id="addForm" class="flex-box" onsubmit="event.preventDefault(); addNewRequest();">
+                <input type="number" id="reqId" placeholder="رقم الأمر" required style="width:100px;">
+                <input type="text" id="reqLoc" placeholder="المكان" required style="width:150px;">
+                <input type="text" id="reqDesc" placeholder="الوصف" required style="flex:1;">
+                <select id="reqStatus">
+                    <option value="طلب جديد">طلب جديد</option>
+                    <option value="تحت الإجراء">تحت الإجراء</option>
+                    <option value="منجز">منجز</option>
+                    <option value="مدير المشروع">مدير المشروع</option>
+                    <option value="مدير الصيانة">مدير الصيانة</option>
+                </select>
+                <button type="submit" style="background:var(--success); color:white; border:none; padding:10px 20px; border-radius:10px; cursor:pointer; font-weight:bold;">+ إضافة طلب</button>
+            </form>
+        </div>
+
         <div class="box">
-            <input type="text" id="searchInp" onkeyup="srT()" placeholder="🔍 ابحث في هذا الموقع..." style="width:100%; padding:12px; border-radius:10px; border:1px solid #ddd; box-sizing:border-box;">
+            <input type="text" id="searchInp" onkeyup="srT()" placeholder="🔍 ابحث في هذا الموقع..." style="width:100%; box-sizing:border-box;">
         </div>
 
         <div class="box" style="padding:0; overflow:hidden;">
             <table>
-                <thead><tr><th>رقم</th><th>المكان</th><th>الوصف</th><th>الحالة</th></tr></thead>
+                <thead><tr><th>رقم</th><th>المكان</th><th>الوصف</th><th>الحالة</th><th>إجراء</th></tr></thead>
                 <tbody id="tB"></tbody>
             </table>
         </div>
@@ -88,9 +106,12 @@
 </div>
 
 <script>
-    // الرابط الخاص بك
     const _0xU = 'https://script.google.com/macros/s/AKfycbxBPlPYh-Hc5NDE-91CYALTuhBu_B08JwaBZelM3HEoGlw1VXiVBUGAcJdyNvFSKP0i/exec';
     
+    // روابط التنبيهات الصوتية
+    const sndAdd = new Audio('https://assets.mixkit.co');
+    const sndDel = new Audio('https://assets.mixkit.co');
+
     const _0xUs = { 
         "admin": {p:"ahsa2024", r:"admin", n:"م. حسين"}, 
         "user1": {p:"11332030@", r:"user", n:"الفني"}, 
@@ -120,6 +141,37 @@
             });
     }
 
+    function addNewRequest() {
+        document.getElementById('sync-loader').style.display = 'block';
+        const payload = {
+            id: document.getElementById('reqId').value,
+            location: document.getElementById('reqLoc').value,
+            date: new Date().toLocaleDateString('en-GB'),
+            desc: document.getElementById('reqDesc').value,
+            status: document.getElementById('reqStatus').value,
+            site: document.getElementById('sSel').value,
+            action: 'add'
+        };
+
+        fetch(_0xU, { method: 'POST', body: JSON.stringify(payload) })
+        .then(() => {
+            sndAdd.play(); // تشغيل صوت الإضافة
+            document.getElementById('addForm').reset();
+            fetchData();
+        });
+    }
+
+    function deleteRequest(id) {
+        if(!confirm("هل أنت متأكد من حذف هذا الطلب نهائياً؟")) return;
+        document.getElementById('sync-loader').style.display = 'block';
+        const payload = { id: id, action: 'delete' };
+        fetch(_0xU, { method: 'POST', body: JSON.stringify(payload) })
+        .then(() => {
+            sndDel.play(); // تشغيل صوت الحذف
+            fetchData();
+        });
+    }
+
     function renderTable(data) {
         const tbody = document.getElementById('tB');
         tbody.innerHTML = '';
@@ -129,6 +181,7 @@
                 <td>${item.location}</td>
                 <td>${item.desc}</td>
                 <td><span class="badge ${getStatusClass(item.status)}">${item.status}</span></td>
+                <td><button class="btn-del" onclick="deleteRequest('${item.id}')">حذف</button></td>
             </tr>`;
             tbody.innerHTML += row;
         });
@@ -147,13 +200,15 @@
         const rows = document.querySelectorAll("#tB tr");
         let s = { total:0, new:0, pro:0, done:0, pm:0, mm:0 };
         rows.forEach(r => {
-            const status = r.cells[3].innerText.trim();
-            s.total++;
-            if(status === 'طلب جديد') s.new++;
-            if(status === 'تحت الإجراء') s.pro++;
-            if(status === 'منجز') s.done++;
-            if(status === 'مدير المشروع') s.pm++;
-            if(status === 'مدير الصيانة') s.mm++;
+            if(r.style.display !== "none") {
+                 const status = r.cells[3].innerText.trim();
+                 s.total++;
+                 if(status === 'طلب جديد') s.new++;
+                 if(status === 'تحت الإجراء') s.pro++;
+                 if(status === 'منجز') s.done++;
+                 if(status === 'مدير المشروع') s.pm++;
+                 if(status === 'مدير الصيانة') s.mm++;
+            }
         });
         document.getElementById("totalCount").innerText = s.total;
         document.getElementById("newCount").innerText = s.new;
@@ -172,6 +227,7 @@
             const rStatus = r.cells[3].innerText.trim();
             r.style.display = (status === 'الكل' || rStatus === status) ? "" : "none";
         });
+        updateStats();
     }
 
     function srT() {
@@ -179,6 +235,7 @@
         document.querySelectorAll("#tB tr").forEach(r => {
             r.style.display = r.innerText.toLowerCase().includes(val) ? "" : "none";
         });
+        updateStats();
     }
 </script>
 </body>
