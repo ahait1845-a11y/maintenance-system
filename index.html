@@ -6,7 +6,7 @@
     <title>نظام الصيانة - م. حسين العلي</title>
     <style>
         :root { --primary: #0288D1; --sky: #E3F2FD; --dark-blue: #1565C0; --success: #10B981; --warning: #F59E0B; --danger: #EF4444; --gray: #94A3B8; --light-sky: #00B0FF; }
-        body { font-family: 'Segoe UI', Tahoma, sans-serif; background: #F4F7F9; margin: 0; padding: 0; user-select: none; }
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; background: #F4F7F9; margin: 0; padding: 0; user-select: none; -webkit-user-select: none; }
         #loginSection { display: flex; align-items: center; justify-content: center; height: 100vh; background: linear-gradient(135deg, var(--sky), #fff); }
         .login-card { background: white; padding: 40px; border-radius: 25px; box-shadow: 0 20px 50px rgba(2,136,209,0.1); width: 380px; text-align: center; border: 1px solid var(--sky); }
         .login-card h2 { color: var(--light-sky); margin-bottom: 5px; font-size: 24px; }
@@ -21,7 +21,6 @@
         .stat-card:hover { transform: translateY(-3px); opacity: 1; }
         .stat-card.active-filter { border-bottom: 4px solid var(--primary); transform: scale(1.05); opacity: 1; box-shadow: 0 10px 20px rgba(2,136,209,0.15); }
         .stat-card p { font-size: 26px; font-weight: 800; margin: 8px 0 0; color: var(--dark-blue); }
-        .border-total { border-top-color: var(--primary); } .border-new { border-top-color: var(--gray); } .border-process { border-top-color: #00B0FF; } .border-done { border-top-color: var(--success); } .border-pending { border-top-color: var(--warning); } .border-manager { border-top-color: var(--dark-blue); }
         .box { background: white; padding: 20px; border-radius: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); margin-bottom: 20px; }
         .flex-box { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
         table { width: 100%; border-collapse: collapse; }
@@ -32,10 +31,9 @@
         #sync-loader { position: fixed; bottom: 20px; left: 20px; background: var(--dark-blue); color: white; padding: 10px 25px; border-radius: 30px; display: none; z-index: 999; }
         input, select { padding: 8px; border-radius: 8px; border: 1px solid #ddd; outline: none; }
         .btn-del { background: var(--danger); color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; font-size: 11px; font-weight: bold; }
-        .status-select { font-size: 12px; cursor: pointer; background: #fff; border: 1px solid var(--primary); color: var(--dark-blue); font-weight: bold; }
     </style>
 </head>
-<body>
+<body oncontextmenu="return false;">
 
 <div id="sync-loader">⏳ جاري المزامنة...</div>
 
@@ -62,7 +60,7 @@
         </div>
 
         <div class="stats-grid">
-            <div id="card-all" class="stat-card border-total active-filter" onclick="setFilter('الكل', this)"><h3>المجموع</h3><p id="totalCount">0</p></div>
+            <div id="card-all" class="stat-card border-total" onclick="setFilter('الكل', this)"><h3>المجموع</h3><p id="totalCount">0</p></div>
             <div class="stat-card border-new" onclick="setFilter('طلب جديد', this)"><h3>جديد</h3><p id="newCount">0</p></div>
             <div class="stat-card border-process" onclick="setFilter('تحت الإجراء', this)"><h3>إجراء</h3><p id="processCount">0</p></div>
             <div class="stat-card border-done" onclick="setFilter('منجز', this)"><h3>منجز</h3><p id="doneCount">0</p></div>
@@ -101,110 +99,47 @@
 </div>
 
 <script>
+    document.onkeydown = function(e) { if(e.keyCode == 123 || (e.ctrlKey && e.shiftKey && (e.keyCode == 73 || e.keyCode == 67 || e.keyCode == 74)) || (e.ctrlKey && e.keyCode == 85)) return false; };
     const _0xU = 'https://script.google.com/macros/s/AKfycbxBPlPYh-Hc5NDE-91CYALTuhBu_B08JwaBZelM3HEoGlw1VXiVBUGAcJdyNvFSKP0i/exec';
     const sndAdd = new Audio('https://assets.mixkit.co');
     const sndUpd = new Audio('https://assets.mixkit.co');
-
     const _0xUs = { "admin": {p:"ahsa2024", r:"admin", n:"م. حسين"}, "user1": {p:"11332030@", r:"user", n:"الفني"}, "viewer1": {p:"2030", r:"viewer", n:"المراقب"} };
+    
     let currentUserRole = ""; 
-    let currentStatusFilter = "الكل";
+    let currentStatusFilter = "لا شيء"; // البداية بدون فلتر لسرعة التحميل
+    let cachedData = [];
 
     window.onload = function() {
-        const loggedIn = localStorage.getItem('isLoggedIn');
         const user = localStorage.getItem('loggedUser');
-        if (loggedIn === 'true' && user && _0xUs[user]) { setupDashboard(user); }
+        if (localStorage.getItem('isLoggedIn') === 'true' && user && _0xUs[user]) setupDashboard(user);
     };
 
     function hL() {
-        const u = document.getElementById('uInp').value;
-        const p = document.getElementById('pInp').value;
-        if (_0xUs[u] && _0xUs[u].p === p) {
-            localStorage.setItem('isLoggedIn', 'true');
-            localStorage.setItem('loggedUser', u);
-            setupDashboard(u);
-        } else { alert("خطأ في البيانات"); }
+        const u = document.getElementById('uInp').value, p = document.getElementById('pInp').value;
+        if (_0xUs[u] && _0xUs[u].p === p) { localStorage.setItem('isLoggedIn', 'true'); localStorage.setItem('loggedUser', u); setupDashboard(u); } else alert("خطأ!");
     }
 
     function setupDashboard(u) {
-        currentUserRole = _0xUs[u].r;
-        document.getElementById('loginSection').style.display = 'none';
-        document.getElementById('dashboard').style.display = 'block';
-        document.getElementById('uN').innerText = _0xUs[u].n;
-        checkPermissions();
-        fetchData();
+        currentUserRole = _0xUs[u].r; document.getElementById('loginSection').style.display = 'none'; document.getElementById('dashboard').style.display = 'block';
+        document.getElementById('uN').innerText = _0xUs[u].n; checkPermissions(); fetchData();
     }
 
     function logout() { localStorage.clear(); location.reload(); }
-
-    function checkPermissions() {
-        document.getElementById('addBox').style.display = (currentUserRole === 'viewer') ? 'none' : 'block';
-        document.getElementById('actionHeader').style.display = (currentUserRole === 'admin') ? '' : 'none';
-    }
+    function checkPermissions() { document.getElementById('addBox').style.display = (currentUserRole === 'viewer') ? 'none' : 'block'; document.getElementById('actionHeader').style.display = (currentUserRole === 'admin') ? '' : 'none'; }
 
     function fetchData() {
-    fetch(_0xU).then(res => res.json()).then(data => {
-        const site = document.getElementById('sSel').value;
-        // فلترة الموقع ثم عكس الترتيب ليظهر الأحدث أولاً
-        const filtered = data.filter(item => item.site === site).reverse(); 
-        renderTable(filtered);
-    });
-}
-
-    function addNewRequest() {
-        const idInput = document.getElementById('reqId').value;
-        const rows = document.querySelectorAll("#tB tr td:first-child");
-        let isDuplicate = false;
-        rows.forEach(td => { if (td.innerText.trim() === idInput.trim()) isDuplicate = true; });
-
-        if (isDuplicate) { alert("⚠️ رقم الأمر مكرر!"); return; }
-
-        document.getElementById('sync-loader').style.display = 'block';
-        const payload = { id: idInput, location: document.getElementById('reqLoc').value, date: new Date().toLocaleDateString('en-GB'), desc: document.getElementById('reqDesc').value, status: document.getElementById('reqStatus').value, site: document.getElementById('sSel').value, action: 'add' };
-        fetch(_0xU, { method: 'POST', body: JSON.stringify(payload) }).then(() => { sndAdd.play(); document.getElementById('addForm').reset(); fetchData(); document.getElementById('sync-loader').style.display = 'none'; });
-    }
-
-    function updateStatus(id, newStatus) {
-        document.getElementById('sync-loader').style.display = 'block';
-        fetch(_0xU, { method: 'POST', body: JSON.stringify({ id: id, status: newStatus, action: 'update' }) }).then(() => { sndUpd.play(); fetchData(); document.getElementById('sync-loader').style.display = 'none'; });
-    }
-
-    function deleteRequest(id) {
-        if(!confirm("حذف؟")) return;
-        document.getElementById('sync-loader').style.display = 'block';
-        fetch(_0xU, { method: 'POST', body: JSON.stringify({ id: id, action: 'delete' }) }).then(() => { fetchData(); document.getElementById('sync-loader').style.display = 'none'; });
-    }
-
-    function renderTable(data) {
-        const tbody = document.getElementById('tB');
-        tbody.innerHTML = '';
-        data.forEach(item => {
-            let statusHTML = `<span class="badge ${getStatusClass(item.status)}">${item.status}</span>`;
-            if (currentUserRole === 'admin') {
-                statusHTML = `<select class="status-select" onchange="updateStatus('${item.id}', this.value)">
-                    <option value="طلب جديد" ${item.status === 'طلب جديد' ? 'selected' : ''}>جديد</option>
-                    <option value="تحت الإجراء" ${item.status === 'تحت الإجراء' ? 'selected' : ''}>إجراء</option>
-                    <option value="منجز" ${item.status === 'منجز' ? 'selected' : ''}>منجز</option>
-                    <option value="مدير المشروع" ${item.status === 'مدير المشروع' ? 'selected' : ''}>م.مشروع</option>
-                    <option value="مدير الصيانة" ${item.status === 'مدير الصيانة' ? 'selected' : ''}>م.صيانة</option>
-                </select>`;
-            }
-            const delAction = (currentUserRole === 'admin') ? `<td><button class="btn-del" onclick="deleteRequest('${item.id}')">حذف</button></td>` : '';
-            tbody.innerHTML += `<tr><td>${item.id}</td><td>${item.location}</td><td>${item.desc}</td><td>${statusHTML}</td>${delAction}</tr>`;
+        fetch(_0xU).then(res => res.json()).then(data => {
+            const site = document.getElementById('sSel').value;
+            cachedData = data.reduceRight((acc, item) => { if (item.site === site) acc.push(item); return acc; }, []);
+            updateStats(cachedData);
+            if (currentStatusFilter !== "لا شيء") renderTable(); // تحديث الجدول فقط إذا كان هناك فلتر نشط
         });
-        updateStats();
-        applyFilterAndSearch(); // إعادة تطبيق البحث والفلتر فوراً بعد الرسم
     }
 
-    function getStatusClass(s) {
-        if(s === 'طلب جديد') return 'bg-new'; if(s === 'تحت الإجراء') return 'bg-process'; if(s === 'منجز') return 'bg-done'; if(s === 'مدير المشروع') return 'bg-pending'; return 'bg-manager';
-    }
-
-    function updateStats() {
-        const rows = document.querySelectorAll("#tB tr");
+    function updateStats(data) {
         let s = { total:0, new:0, pro:0, done:0, pm:0, mm:0 };
-        rows.forEach(r => {
-            let st = r.querySelector('select') ? r.querySelector('select').value : r.cells[3].innerText.trim();
-            s.total++; if(st === 'طلب جديد') s.new++; if(st === 'تحت الإجراء') s.pro++; if(st === 'منجز') s.done++; if(st === 'مدير المشروع') s.pm++; if(st === 'مدير الصيانة') s.mm++;
+        data.forEach(item => {
+            s.total++; if(item.status === 'طلب جديد') s.new++; if(item.status === 'تحت الإجراء') s.pro++; if(item.status === 'منجز') s.done++; if(item.status === 'مدير المشروع') s.pm++; if(item.status === 'مدير الصيانة') s.mm++;
         });
         document.getElementById("totalCount").innerText = s.total; document.getElementById("newCount").innerText = s.new; document.getElementById("processCount").innerText = s.pro; document.getElementById("doneCount").innerText = s.done; document.getElementById("pendingCount").innerText = s.pm; document.getElementById("managerCount").innerText = s.mm;
         document.getElementById("kpiValue").innerText = s.total > 0 ? Math.round((s.done/s.total)*100) + "%" : "0%";
@@ -214,25 +149,44 @@
         currentStatusFilter = status;
         document.querySelectorAll('.stat-card').forEach(c => c.classList.remove('active-filter'));
         el.classList.add('active-filter');
-        applyFilterAndSearch();
+        renderTable();
     }
 
-    function applyFilterAndSearch() {
-        const searchVal = document.getElementById("searchInp").value.toLowerCase();
-        const rows = document.querySelectorAll("#tB tr");
-        rows.forEach(r => {
-            const select = r.querySelector('select');
-            const rStatus = select ? select.value : r.cells[3].innerText.trim();
-            const matchesFilter = (currentStatusFilter === 'الكل' || rStatus === currentStatusFilter);
-            const matchesSearch = r.innerText.toLowerCase().includes(searchVal);
-            r.style.display = (matchesFilter && matchesSearch) ? "" : "none";
+    function renderTable() {
+        const tbody = document.getElementById('tB'), searchVal = document.getElementById("searchInp").value.toLowerCase();
+        tbody.innerHTML = '';
+        cachedData.forEach(item => {
+            const matchesFilter = (currentStatusFilter === 'الكل' || item.status === currentStatusFilter);
+            const matchesSearch = Object.values(item).some(v => String(v).toLowerCase().includes(searchVal));
+            if (matchesFilter && matchesSearch) {
+                let statusHTML = `<span class="badge ${getStatusClass(item.status)}">${item.status}</span>`;
+                if (currentUserRole === 'admin') {
+                    statusHTML = `<select onchange="updateStatus('${item.id}', this.value)">
+                        <option value="طلب جديد" ${item.status === 'طلب جديد' ? 'selected' : ''}>جديد</option>
+                        <option value="تحت الإجراء" ${item.status === 'تحت الإجراء' ? 'selected' : ''}>إجراء</option>
+                        <option value="منجز" ${item.status === 'منجز' ? 'selected' : ''}>منجز</option>
+                        <option value="مدير المشروع" ${item.status === 'مدير المشروع' ? 'selected' : ''}>م.مشروع</option>
+                        <option value="مدير الصيانة" ${item.status === 'مدير الصيانة' ? 'selected' : ''}>م.صيانة</option>
+                    </select>`;
+                }
+                const delBtn = (currentUserRole === 'admin') ? `<td><button class="btn-del" onclick="deleteRequest('${item.id}')">حذف</button></td>` : '';
+                tbody.innerHTML += `<tr><td style="font-weight:bold;">${item.id}</td><td>${item.location}</td><td>${item.desc}</td><td>${statusHTML}</td>${delBtn}</tr>`;
+            }
         });
     }
 
-    // التحديث التلقائي كل 30 ثانية مع الحفاظ على الحالة
-    setInterval(() => { 
-        if (document.getElementById('dashboard').style.display === 'block') fetchData(); 
-    }, 30000);
+    function getStatusClass(s) { if(s === 'طلب جديد') return 'bg-new'; if(s === 'تحت الإجراء') return 'bg-process'; if(s === 'منجز') return 'bg-done'; if(s === 'مدير المشروع') return 'bg-pending'; return 'bg-manager'; }
+    function applyFilterAndSearch() { if (currentStatusFilter === "لا شيء") setFilter('الكل', document.getElementById('card-all')); else renderTable(); }
+    function updateStatus(id, ns) { document.getElementById('sync-loader').style.display = 'block'; fetch(_0xU, { method: 'POST', body: JSON.stringify({ id: id, status: ns, action: 'update' }) }).then(() => { sndUpd.play(); fetchData(); document.getElementById('sync-loader').style.display = 'none'; }); }
+    function deleteRequest(id) { if(confirm("حذف؟")) { document.getElementById('sync-loader').style.display = 'block'; fetch(_0xU, { method: 'POST', body: JSON.stringify({ id: id, action: 'delete' }) }).then(() => { fetchData(); document.getElementById('sync-loader').style.display = 'none'; }); } }
+    function addNewRequest() {
+        const id = document.getElementById('reqId').value;
+        if (cachedData.some(d => d.id == id)) { alert("مكرر!"); return; }
+        document.getElementById('sync-loader').style.display = 'block';
+        const p = { id: id, location: document.getElementById('reqLoc').value, date: new Date().toLocaleDateString('en-GB'), desc: document.getElementById('reqDesc').value, status: document.getElementById('reqStatus').value, site: document.getElementById('sSel').value, action: 'add' };
+        fetch(_0xU, { method: 'POST', body: JSON.stringify(p) }).then(() => { sndAdd.play(); document.getElementById('addForm').reset(); fetchData(); document.getElementById('sync-loader').style.display = 'none'; });
+    }
+    setInterval(() => { if (document.getElementById('dashboard').style.display === 'block') fetchData(); }, 30000);
 </script>
 </body>
 </html>
